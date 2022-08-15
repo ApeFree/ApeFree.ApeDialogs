@@ -1,0 +1,25 @@
+﻿using System.Collections.Generic;
+
+namespace ApeFree.ApeDialogs.Settings
+{
+    public class PromptDialogSettings : DialogSettings
+    {
+        /// <summary>
+        /// 积极选项文本
+        /// </summary>
+        public string PositiveOptionText { get; set; }
+
+        /// <summary>
+        /// 消极选项文本（Cancel）
+        /// </summary>
+        public string NegativeOptionText { get => CancelOptionText; set => CancelOptionText = value; }
+
+        public override IEnumerable<DialogOption> GetOptionsHandler()
+        {
+            return new List<DialogOption>() {
+                new DialogOption(PositiveOptionText, DialogOptionType.Positive),
+                new DialogOption(NegativeOptionText, DialogOptionType.Negative),
+            };
+        }
+    }
+}
