@@ -1,1 +1,8 @@
 # ApeFree.ApeDialogs
+
+ApeFree.ApeDialogs并不是一个包含Dialog实现的UI库，而是一套Dialog标准（提供了一套临时弹出对话框的实现标准）。
+Dialog是界面开发过程中必不可少的组件，无论是桌面开发、Web前端开发、移动端开发，甚至命令行应用程序中的一次“Yes or No”的输入都可以看做是一次Dialog弹框。
+
+在切身体验了上述的几种平台的开发场景后，深知在每一个平台上开发美观且好用的自定义Dialog并不是一件轻松完成的事情，并且在切换开发平台时还存在一定的学习门槛和学习成本。因此决定创建ApeDialogs这一个开源的Dialog标准库。
+
+ApeDialogs将会被实现在ApeFree已开源的UI库中（ApeForms、AndroidPlus），欢迎体验。
