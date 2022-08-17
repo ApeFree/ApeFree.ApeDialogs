@@ -16,7 +16,6 @@ namespace ApeFree.ApeDialogs.Settings
         public static IEnumerable<DialogOption> GetValidItems(this IEnumerable<DialogOption> options)
         {
             return options.Where(o=>!string.IsNullOrWhiteSpace(o.Text));
-
         }
     }
 }
