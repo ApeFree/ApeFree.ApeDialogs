@@ -12,7 +12,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 清空选项文本
         /// </summary>
-        public string ClearOptionText { get; set; }
+        public string ClearOptionText { get; set; } = "Clear";
 
         /// <summary>
         /// 允许输入内容为空

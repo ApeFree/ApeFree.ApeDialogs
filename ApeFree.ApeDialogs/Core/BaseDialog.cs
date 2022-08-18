@@ -15,6 +15,8 @@ namespace ApeFree.ApeDialogs.Core
 
     public abstract class BaseDialog<TView, TContext> : IDialog<TView, TContext>
     {
+        private readonly DialogSettings settings;
+
         public event DialogEventHandler Showing;
         public event DialogEventHandler Shown;
         public event DialogEventHandler Dismissing;
@@ -25,6 +27,8 @@ namespace ApeFree.ApeDialogs.Core
         public TContext Context { get; protected set; }
 
         public TView ContentView { get; set; }
+        public abstract string Title { get; set; }
+        public abstract string Content { get; set; }
 
         /// <summary>
         /// 设置选项
