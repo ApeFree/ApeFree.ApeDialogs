@@ -28,6 +28,11 @@ namespace ApeFree.ApeDialogs.Settings
         public string CancelOptionText { get; set; }
 
         /// <summary>
+        /// 配色风格
+        /// </summary>
+        public ColorStyle ColorStyle { get; set; }
+
+        /// <summary>
         /// 获取对话框的选项信息
         /// </summary>
         /// <returns></returns>
@@ -45,5 +50,26 @@ namespace ApeFree.ApeDialogs.Settings
         /// <param name="result">待检查值</param>
         /// <returns></returns>
         public delegate bool PrecheckResultHandler<TResult>(TResult result);
+    }
+
+    /// <summary>
+    /// 配色风格
+    /// </summary>
+    public enum ColorStyle
+    {
+        /// <summary>
+        /// 明亮模式
+        /// </summary>
+        Bright,
+
+        /// <summary>
+        /// 夜间模式
+        /// </summary>
+        Night,
+
+        /// <summary>
+        /// 柔光模式
+        /// </summary>
+        // SoftLight,
     }
 }
