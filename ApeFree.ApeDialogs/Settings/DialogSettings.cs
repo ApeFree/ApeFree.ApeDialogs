@@ -25,7 +25,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 取消选项文本
         /// </summary>
-        public string CancelOptionText { get; set; }
+        public string CancelOptionText { get; set; } = "Cancel";
 
         /// <summary>
         /// 配色风格
