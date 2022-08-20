@@ -42,6 +42,7 @@ namespace ApeFree.ApeDialogs.Settings
         public override IEnumerable<DialogOption> GetOptionsHandler()
         {
             return new List<DialogOption>() {
+                new DialogOption(ClearOptionText, DialogOptionType.Functional),
                 new DialogOption(ConfirmOptionText, DialogOptionType.Positive),
                 new DialogOption(CancelOptionText, DialogOptionType.Negative,Cancelable),
             };
