@@ -4,18 +4,19 @@ using System.Collections.Generic;
 
 namespace ApeFree.ApeDialogs.Core
 {
+    public delegate void DialogEventHandler(IDialog dialog, EventArgs e);
+
     /// <summary>
     /// 对话框标准接口
     /// </summary>
-    public interface IDialog<TView, TContext>:IDialog
+    public interface IDialog<TResult> : IDialog
     {
-        TContext Context { get; }
-
-        TView ContentView { get; set; }
+        Result<TResult> Result { get; }
     }
 
-    public delegate void DialogEventHandler(IDialog dialog, EventArgs e);
-
+    /// <summary>
+    /// 对话框标准接口
+    /// </summary>
     public interface IDialog
     {
         event DialogEventHandler Showing;

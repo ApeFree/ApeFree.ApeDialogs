@@ -4,37 +4,47 @@ using System.Collections.Generic;
 
 namespace ApeFree.ApeDialogs.Core
 {
-    public abstract class BaseDialog<TView, TContext, TResult> : BaseDialog<TView, TContext>
+    public abstract class BaseDialog<TView, TOption, TContext, TResult> : IDialog<TResult>
     {
-        public new Result<TResult> Result
-        {
-            get => (Result<TResult>)base.Result;
-            protected set => base.Result = value;
-        }
-    }
-
-    public abstract class BaseDialog<TView, TContext> : IDialog<TView, TContext>
-    {
-        private readonly DialogSettings settings;
-
         public event DialogEventHandler Showing;
         public event DialogEventHandler Shown;
         public event DialogEventHandler Dismissing;
         public event DialogEventHandler Dismissed;
 
-        public Result Result { get; protected set; }
-
+        public Result<TResult> Result { get; protected set; } = new Result<TResult>();
         public TContext Context { get; protected set; }
-
         public TView ContentView { get; set; }
         public abstract string Title { get; set; }
         public abstract string Content { get; set; }
 
+        protected Func<TView, TResult> ExtractResultFromViewHandler { get; set; }
+
+        /// <summary>
+        /// 从视图中提取结果
+        /// </summary>
+        /// <returns></returns>
+        public virtual TResult ExtractResultFromView()
+        {
+            var data = ExtractResultFromViewHandler.Invoke(ContentView);
+            Result = new Result<TResult>(data);
+            return data;
+        }
+
         /// <summary>
         /// 设置选项
         /// </summary>
-        /// <param name="options"></param>
-        protected abstract void SetOptions(IEnumerable<DialogOption> options);
+        /// <param name="text">选项名</param>
+        /// <param name="onClick">单击动作</param>
+        /// <returns></returns>
+        public abstract TOption AddOption(string text, Action<IDialog, TOption> onClick = null);
+
+        /// <summary>
+        /// 清空选项
+        /// </summary>
+        public abstract void ClearOptions();
+
+
+
 
         public void Show()
         {
