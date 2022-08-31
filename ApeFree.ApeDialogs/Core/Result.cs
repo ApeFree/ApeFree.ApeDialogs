@@ -26,8 +26,8 @@ namespace ApeFree.ApeDialogs.Core
     public class Result<T> : Result
     {
         public new T Data => (T)base.Data;
-        public Result() : base(false, null) { }
-        public Result(T data) : base(true, data) { }
+        public Result() : base(true, null) { }
+        public Result(T data) : base(false, data) { }
         public Result(bool isCancel, T data) : base(isCancel, data) { }
     }
 }
