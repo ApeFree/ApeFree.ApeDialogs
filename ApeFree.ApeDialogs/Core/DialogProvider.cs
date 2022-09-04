@@ -48,7 +48,7 @@ namespace ApeFree.ApeDialogs
         /// <param name="setings">配置参数</param>
         /// <param name="context">上下文</param>
         /// <returns></returns>
-        public abstract IDialog<T> CreateSelectionDialog<T>(SelectionDialogSettings setings, IEnumerable<T> collection, T defaultSelectedItem, TContext context);
+        public abstract IDialog<T> CreateSelectionDialog<T>(SelectionDialogSettings<T> setings, IEnumerable<T> collection, T defaultSelectedItem, TContext context);
 
         /// <summary>
         /// 创建多选对话框
@@ -56,7 +56,7 @@ namespace ApeFree.ApeDialogs
         /// <param name="setings">配置参数</param>
         /// <param name="context">上下文</param>
         /// <returns></returns>
-        public abstract IDialog<IEnumerable<T>> CreateMultipleSelectionDialog<T>(MultipleSelectionDialogSettings setings, IEnumerable<T> collection, IEnumerable<T> defaultSelectedItems, TContext context);
+        public abstract IDialog<IEnumerable<T>> CreateMultipleSelectionDialog<T>(MultipleSelectionDialogSettings<T> setings, IEnumerable<T> collection, IEnumerable<T> defaultSelectedItems, TContext context);
 
         /// <summary>
         /// 创建日期选择对话框

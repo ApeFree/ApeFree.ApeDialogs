@@ -2,7 +2,7 @@
 
 namespace ApeFree.ApeDialogs.Settings
 {
-    public class PromptDialogSettings : DialogSettings
+    public class PromptDialogSettings : DialogSettings<bool>
     {
         /// <summary>
         /// 积极选项文本

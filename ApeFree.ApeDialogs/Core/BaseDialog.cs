@@ -6,6 +6,13 @@ namespace ApeFree.ApeDialogs.Core
 {
     public abstract class BaseDialog<TView, TOption, TContext, TResult> : IDialog<TResult>
     {
+        protected readonly DialogSettings<TResult> Settings;
+
+        protected BaseDialog(DialogSettings<TResult> settings)
+        {
+            Settings = settings;
+        }
+
         public event DialogEventHandler Showing;
         public event DialogEventHandler Shown;
         public event DialogEventHandler Dismissing;
@@ -16,7 +23,6 @@ namespace ApeFree.ApeDialogs.Core
         public TView ContentView { get; set; }
         public abstract string Title { get; set; }
         public abstract string Content { get; set; }
-
         protected Func<TView, TResult> ExtractResultFromViewHandler { get; set; }
 
         /// <summary>
@@ -25,10 +31,32 @@ namespace ApeFree.ApeDialogs.Core
         /// <returns></returns>
         public virtual TResult ExtractResultFromView()
         {
-            var data = ExtractResultFromViewHandler.Invoke(ContentView);
-            Result = new Result<TResult>(data);
-            return data;
+            if (ExtractResultFromViewHandler == null)
+            {
+                return default(TResult);
+            }
+            else
+            {
+                var data = ExtractResultFromViewHandler.Invoke(ContentView);
+                Result = new Result<TResult>(data);
+                return data;
+            }
         }
+
+        public virtual bool PerformPrecheck()
+        {
+            var result = Settings.PrecheckResult?.Invoke(Result.Data) ?? true;
+            if (!result)
+            {
+                PrecheckFailsCallback();
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 预处理未通过时执行的回调
+        /// </summary>
+        protected abstract void PrecheckFailsCallback();
 
         /// <summary>
         /// 设置选项
@@ -43,9 +71,9 @@ namespace ApeFree.ApeDialogs.Core
         /// </summary>
         public abstract void ClearOptions();
 
-
-
-
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
         public void Show()
         {
             RaiseShowing();
@@ -53,8 +81,13 @@ namespace ApeFree.ApeDialogs.Core
             RaiseShown();
         }
 
-        public void Dismiss()
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        public void Dismiss(bool isCancel)
         {
+            Result.IsCancel = isCancel;
+
             RaiseDismissing();
             DismissHandler();
             RaiseDismissed();

@@ -2,7 +2,7 @@
 
 namespace ApeFree.ApeDialogs.Settings
 {
-    public class MessageDialogSettings : DialogSettings
+    public class MessageDialogSettings : DialogSettings<bool>
     {
         public override IEnumerable<DialogOption> GetOptionsHandler()
         {

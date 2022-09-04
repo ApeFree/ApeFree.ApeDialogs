@@ -32,6 +32,6 @@ namespace ApeFree.ApeDialogs.Core
         /// <summary>
         /// 销毁Dialog
         /// </summary>
-        void Dismiss();
+        void Dismiss(bool isCancel);
     }
 }

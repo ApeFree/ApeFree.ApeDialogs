@@ -2,7 +2,7 @@
 
 namespace ApeFree.ApeDialogs.Settings
 {
-    public class InputDialogSettings : DialogSettings
+    public class InputDialogSettings : DialogSettings<string>
     {
         /// <summary>
         /// 确认选项文本
@@ -33,11 +33,6 @@ namespace ApeFree.ApeDialogs.Settings
         /// 是否多行
         /// </summary>
         public bool IsMultiline { get; set; }
-
-        /// <summary>
-        /// 预检查返回结果的方法
-        /// </summary>
-        public PrecheckResultHandler<string> PrecheckResult { get; set; }
 
         public override IEnumerable<DialogOption> GetOptionsHandler()
         {

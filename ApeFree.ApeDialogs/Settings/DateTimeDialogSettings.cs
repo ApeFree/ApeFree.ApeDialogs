@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ApeFree.ApeDialogs.Settings
 {
-    public class DateTimeDialogSettings : DialogSettings
+    public class DateTimeDialogSettings : DialogSettings<DateTime>
     {
         /// <summary>
         /// 确认选项文本

@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ApeFree.ApeDialogs.Settings
 {
     /// <summary>
     /// Dialog选项
     /// </summary>
-    public abstract class DialogSettings
+    public abstract class DialogSettings<TResult>
     {
         /// <summary>
         /// 标题
@@ -49,7 +50,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <typeparam name="TResult">返回结果类型</typeparam>
         /// <param name="result">待检查值</param>
         /// <returns></returns>
-        public delegate bool PrecheckResultHandler<TResult>(TResult result);
+        // public delegate bool PrecheckResultHandler<TResult>(TResult result);
+
+        /// <summary>
+        /// 返回结果预校验
+        /// </summary>
+        public Func<TResult, bool> PrecheckResult { get; set; }
     }
 
     /// <summary>

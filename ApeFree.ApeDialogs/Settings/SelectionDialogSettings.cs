@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ApeFree.ApeDialogs.Settings
 {
-    public class SelectionDialogSettings : DialogSettings
+    public class SelectionDialogSettings<T> : DialogSettings<T>
     {
         /// <summary>
         /// 确认选项文本
@@ -13,7 +13,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 选项显示文本转换回调
         /// </summary>
-        public Func<string, object> ItemDisplayTextConvertCallback { get; set; } = (item) => item.ToString();
+        public Func<T, string> ItemDisplayTextConvertCallback { get; set; } = (item) => item.ToString();
 
         public override IEnumerable<DialogOption> GetOptionsHandler()
         {

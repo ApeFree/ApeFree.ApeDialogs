@@ -2,7 +2,7 @@
 
 namespace ApeFree.ApeDialogs.Settings
 {
-    public class MultipleSelectionDialogSettings : SelectionDialogSettings
+    public class MultipleSelectionDialogSettings<T> : SelectionDialogSettings<T>
     {
         /// <summary>
         /// 全选选项文本
