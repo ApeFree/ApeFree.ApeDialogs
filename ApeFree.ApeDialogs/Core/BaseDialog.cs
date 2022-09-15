@@ -49,6 +49,7 @@ namespace ApeFree.ApeDialogs.Core
             if (!result)
             {
                 PrecheckFailsCallback();
+                Result = new Result<TResult>();
             }
             return result;
         }
