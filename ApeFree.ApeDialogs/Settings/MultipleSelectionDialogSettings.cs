@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ApeFree.ApeDialogs.Settings
 {
-    public class MultipleSelectionDialogSettings<T> : SelectionDialogSettings<T>
+    public class MultipleSelectionDialogSettings<T> : DialogSettings<IEnumerable<T>>
     {
         /// <summary>
         /// 全选选项文本
@@ -13,6 +14,16 @@ namespace ApeFree.ApeDialogs.Settings
         /// 反选选项文本
         /// </summary>
         public string ReverseSelectedOptionText { get; set; } = "Reverse";
+
+        /// <summary>
+        /// 确认选项文本
+        /// </summary>
+        public string ConfirmOptionText { get; set; } = "Confirm";
+
+        /// <summary>
+        /// 选项显示文本转换回调
+        /// </summary>
+        public Func<T, string> ItemDisplayTextConvertCallback { get; set; } = (item) => item.ToString();
 
         public override IEnumerable<DialogOption> GetOptionsHandler()
         {
