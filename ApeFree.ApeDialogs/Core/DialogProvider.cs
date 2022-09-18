@@ -8,7 +8,7 @@ namespace ApeFree.ApeDialogs
     /// <summary>
     /// Dialog提供器接口
     /// </summary>
-    public abstract partial class DialogProvider<TView, TContext>
+    public abstract partial class DialogProvider<TContext>
     {
         /// <summary>
         /// 创建消息对话框
