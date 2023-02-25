@@ -65,7 +65,7 @@ namespace ApeFree.ApeDialogs.Core
         /// <param name="text">选项名</param>
         /// <param name="onClick">单击动作</param>
         /// <returns></returns>
-        public abstract TOption AddOption(string text, Action<IDialog, TOption> onClick = null);
+        public abstract TOption AddOption(DialogOption option, Action<IDialog, TOption> onClick = null);
 
         /// <summary>
         /// 清空选项
