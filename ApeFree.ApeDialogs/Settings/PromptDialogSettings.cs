@@ -14,7 +14,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// </summary>
         public string NegativeOptionText { get => CancelOptionText; set => CancelOptionText = value; }
 
-        public override IEnumerable<DialogOption> GetOptionsHandler()
+        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()
         {
             return new List<DialogOption>() {
                 new DialogOption(PositiveOptionText, DialogOptionType.Positive),

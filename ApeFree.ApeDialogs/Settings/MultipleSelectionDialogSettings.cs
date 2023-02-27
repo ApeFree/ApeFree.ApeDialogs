@@ -25,7 +25,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// </summary>
         public Func<T, string> ItemDisplayTextConvertCallback { get; set; } = (item) => item.ToString();
 
-        public override IEnumerable<DialogOption> GetOptionsHandler()
+        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()
         {
             return new List<DialogOption>() {
                 new DialogOption(SelectAllOptionText, DialogOptionType.Functional),

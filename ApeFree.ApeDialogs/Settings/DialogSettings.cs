@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace ApeFree.ApeDialogs.Settings
 {
@@ -34,14 +35,19 @@ namespace ApeFree.ApeDialogs.Settings
         public ColorStyle ColorStyle { get; set; }
 
         /// <summary>
+        /// 对话框建议尺寸
+        /// </summary>
+        public Size? DialogSize { get; set; }
+
+        /// <summary>
         /// 获取对话框的选项信息
         /// </summary>
         /// <returns></returns>
-        public abstract IEnumerable<DialogOption> GetOptionsHandler();
+        protected abstract IEnumerable<DialogOption> GetDefaultOptionsHandler();
 
         public IEnumerable<DialogOption> GetOptions()
         {
-            return GetOptionsHandler().GetValidItems();
+            return GetDefaultOptionsHandler().GetValidItems();
         }
 
         /// <summary>

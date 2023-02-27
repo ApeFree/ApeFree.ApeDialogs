@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace ApeFree.ApeDialogs.Settings
 {
@@ -39,12 +40,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// </summary>
         public bool IsMultiline { get; set; }
 
-        public override IEnumerable<DialogOption> GetOptionsHandler()
+        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()
         {
             return new List<DialogOption>() {
-                new DialogOption(ClearOptionText, DialogOptionType.Functional),
                 new DialogOption(ConfirmOptionText, DialogOptionType.Positive),
                 new DialogOption(CancelOptionText, DialogOptionType.Negative,Cancelable),
+                new DialogOption(ClearOptionText, DialogOptionType.Functional),
             };
         }
     }
