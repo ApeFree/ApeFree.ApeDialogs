@@ -67,6 +67,9 @@ namespace ApeFree.ApeDialogs.Core
         /// <returns></returns>
         public abstract TOption AddOption(DialogOption option, Action<IDialog, TOption> onClick = null);
 
+
+        protected abstract TOption CreateOptionHandler(DialogOption option);
+
         /// <summary>
         /// 清空选项
         /// </summary>
