@@ -5,21 +5,15 @@ namespace ApeFree.ApeDialogs.Settings
     public class PromptDialogSettings : DialogSettings<bool>
     {
         /// <summary>
-        /// 积极选项文本
+        /// 积极选项
         /// </summary>
-        public string PositiveOptionText { get; set; }
+        public DialogOption PositiveOption { get; set; } = new DialogOption("Yes", DialogOptionType.Positive);
 
         /// <summary>
-        /// 消极选项文本（Cancel）
+        /// 消极选项
         /// </summary>
-        public string NegativeOptionText { get => CancelOptionText; set => CancelOptionText = value; }
+        public DialogOption NegativeOption { get; set; } = new DialogOption("No", DialogOptionType.Negative);
 
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()
-        {
-            return new List<DialogOption>() {
-                new DialogOption(PositiveOptionText, DialogOptionType.Positive),
-                new DialogOption(NegativeOptionText, DialogOptionType.Negative),
-            };
-        }
+        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler() => new DialogOption[] { PositiveOption, NegativeOption };
     }
 }

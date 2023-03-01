@@ -4,11 +4,12 @@ namespace ApeFree.ApeDialogs.Settings
 {
     public class MessageDialogSettings : DialogSettings<bool>
     {
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()
-        {
-            return new List<DialogOption>() {
-                new DialogOption(CancelOptionText),
-            };
-        }
+        /// <summary>
+        /// 确认选项
+        /// </summary>
+        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionType.Neutral);
+
+
+        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()=>new DialogOption[] { ConfirmOption };
     }
 }

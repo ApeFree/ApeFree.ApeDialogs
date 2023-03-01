@@ -6,27 +6,25 @@ namespace ApeFree.ApeDialogs.Settings
     public class DateTimeDialogSettings : DialogSettings<DateTime>
     {
         /// <summary>
-        /// 确认选项文本
+        /// 确认选项
         /// </summary>
-        public string ConfirmOptionText { get; set; } = "Confirm";
+        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionType.Positive);
+
+        /// <summary>
+        /// 取消选项
+        /// </summary>
+        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionType.Negative);
 
         /// <summary>
         /// 当前时间选项
         /// </summary>
-        public string CurrentTimeOptionText { get; set; } = "Now";
+        public DialogOption CurrentTimeOption { get; set; } = new DialogOption("Now", DialogOptionType.Functional);
 
         /// <summary>
         /// 日期时间选择精度
         /// </summary>
         public DateTimePrecision Precision { get; set; }
 
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()
-        {
-            return new List<DialogOption>() {
-                new DialogOption(CurrentTimeOptionText, DialogOptionType.Functional),
-                new DialogOption(ConfirmOptionText, DialogOptionType.Positive),
-                new DialogOption(CancelOptionText, DialogOptionType.Negative,Cancelable),
-            };
-        }
+        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler() => new DialogOption[] { ConfirmOption, CancelOption, CurrentTimeOption };
     }
 }

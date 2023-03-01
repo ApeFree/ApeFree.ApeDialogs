@@ -6,33 +6,30 @@ namespace ApeFree.ApeDialogs.Settings
     public class MultipleSelectionDialogSettings<T> : DialogSettings<IEnumerable<T>>
     {
         /// <summary>
-        /// 全选选项文本
+        /// 确认选项
         /// </summary>
-        public string SelectAllOptionText { get; set; } = "All";
+        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionType.Positive);
 
         /// <summary>
-        /// 反选选项文本
+        /// 取消选项
         /// </summary>
-        public string ReverseSelectedOptionText { get; set; } = "Reverse";
+        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionType.Negative);
 
         /// <summary>
-        /// 确认选项文本
+        /// 全选选项
         /// </summary>
-        public string ConfirmOptionText { get; set; } = "Confirm";
+        public DialogOption SelectAllOption { get; set; } = new DialogOption("All", DialogOptionType.Functional);
+
+        /// <summary>
+        /// 反选选项
+        /// </summary>
+        public DialogOption ReverseSelectedOption { get; set; } = new DialogOption("Reverse", DialogOptionType.Functional);
 
         /// <summary>
         /// 选项显示文本转换回调
         /// </summary>
         public Func<T, string> ItemDisplayTextConvertCallback { get; set; } = (item) => item.ToString();
 
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()
-        {
-            return new List<DialogOption>() {
-                new DialogOption(SelectAllOptionText, DialogOptionType.Functional),
-                new DialogOption(ReverseSelectedOptionText, DialogOptionType.Functional),
-                new DialogOption(ConfirmOptionText, DialogOptionType.Positive),
-                new DialogOption(CancelOptionText, DialogOptionType.Negative,Cancelable),
-            };
-        }
+        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler() => new DialogOption[] { ConfirmOption, CancelOption, SelectAllOption, ReverseSelectedOption };
     }
 }

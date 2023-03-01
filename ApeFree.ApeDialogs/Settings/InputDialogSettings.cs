@@ -6,14 +6,19 @@ namespace ApeFree.ApeDialogs.Settings
     public class InputDialogSettings : DialogSettings<string>
     {
         /// <summary>
-        /// 确认选项文本
+        /// 确认选项
         /// </summary>
-        public string ConfirmOptionText { get; set; } = "Confirm";
+        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionType.Positive);
 
         /// <summary>
-        /// 清空选项文本
+        /// 取消选项
         /// </summary>
-        public string ClearOptionText { get; set; } = "Clear";
+        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionType.Negative);
+
+        /// <summary>
+        /// 清空选项
+        /// </summary>
+        public DialogOption ClearOption { get; set; } = new DialogOption("Cancel", DialogOptionType.Functional);
 
         /// <summary>
         /// 默认内容
@@ -40,13 +45,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// </summary>
         public bool IsMultiline { get; set; }
 
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()
-        {
-            return new List<DialogOption>() {
-                new DialogOption(ConfirmOptionText, DialogOptionType.Positive),
-                new DialogOption(CancelOptionText, DialogOptionType.Negative,Cancelable),
-                new DialogOption(ClearOptionText, DialogOptionType.Functional),
-            };
-        }
+        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler() => new DialogOption[] { ConfirmOption, CancelOption, ClearOption };
+
     }
 }
