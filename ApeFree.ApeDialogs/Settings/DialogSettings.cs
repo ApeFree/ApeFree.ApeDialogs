@@ -57,6 +57,11 @@ namespace ApeFree.ApeDialogs.Settings
         /// 返回结果预校验
         /// </summary>
         public Func<TResult, bool> PrecheckResult { get; set; }
+
+        /// <summary>
+        /// 默认的取消选项处理过程
+        /// </summary>
+        internal static readonly Action<object, OptionSelectedEventArgs> DefaultCancelOptionHandler = (s, e) => e.Dialog.Dismiss(true);
     }
 
     /// <summary>
