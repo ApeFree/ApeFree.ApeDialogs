@@ -59,6 +59,11 @@ namespace ApeFree.ApeDialogs.Settings
         public Func<TResult, bool> PrecheckResult { get; set; }
 
         /// <summary>
+        /// 选项标签颜色表
+        /// </summary>
+        public Dictionary<DialogOptionTag, Color> OptionTagColors { get; internal set; }// = new Dictionary<DialogOptionTag, Color>();
+
+        /// <summary>
         /// 默认的取消选项处理过程
         /// </summary>
         internal static readonly Action<object, OptionSelectedEventArgs> DefaultCancelOptionHandler = (s, e) => e.Dialog.Dismiss(true);
