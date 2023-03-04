@@ -5,14 +5,25 @@
     /// </summary>
     public class DialogOption
     {
+        /// <summary>
+        /// 选项文本
+        /// </summary>
         public string Text { get; set; }
-        public bool Enable { get; set; }
+
+        /// <summary>
+        /// 选项是否启用
+        /// </summary>
+        public bool Enabled { get; set; }
+
+        /// <summary>
+        /// 选项类型
+        /// </summary>
         public DialogOptionType OptionType { get; set; }
 
-        public DialogOption(string text = null, DialogOptionType optionType = DialogOptionType.Neutral, bool enable = true)
+        public DialogOption(string text = null, DialogOptionType optionType = DialogOptionType.Neutral, bool enabled = true)
         {
             Text = text;
-            Enable = enable;
+            Enabled = enabled;
             OptionType = optionType;
         }
     }

@@ -20,6 +20,10 @@ namespace ApeFree.ApeDialogs.Settings
         /// </summary>
         public Func<T, string> ItemDisplayTextConvertCallback { get; set; } = (item) => item.ToString();
 
+        /// <summary>
+        /// <inheritdoc/>
+        /// </summary>
+        /// <returns>Dialog默认选项集合</returns>
         protected override IEnumerable<DialogOption> GetDefaultOptionsHandler() => new DialogOption[] { ConfirmOption, CancelOption };
     }
 }
