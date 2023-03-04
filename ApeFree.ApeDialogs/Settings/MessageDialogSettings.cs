@@ -13,6 +13,6 @@ namespace ApeFree.ApeDialogs.Settings
         /// <inheritdoc/>
         /// </summary>
         /// <returns>Dialog默认选项集合</returns>
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()=>new DialogOption[] { ConfirmOption };
+        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler() => new DialogOption[] { ConfirmOption };
     }
 }

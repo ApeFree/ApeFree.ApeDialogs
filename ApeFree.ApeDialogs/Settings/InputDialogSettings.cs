@@ -13,12 +13,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 取消选项
         /// </summary>
-        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionType.Negative);
+        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionType.Negative, callback: DefaultCancelOptionHandler);
 
         /// <summary>
         /// 清空选项
         /// </summary>
-        public DialogOption ClearOption { get; set; } = new DialogOption("Cancel", DialogOptionType.Functional);
+        public DialogOption ClearOption { get; set; } = new DialogOption("Clear", DialogOptionType.Functional);
 
         /// <summary>
         /// 默认内容
