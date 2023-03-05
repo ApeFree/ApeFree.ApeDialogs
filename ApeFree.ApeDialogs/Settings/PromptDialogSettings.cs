@@ -7,12 +7,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 积极选项
         /// </summary>
-        public DialogOption PositiveOption { get; set; } = new DialogOption("Yes", DialogOptionType.Positive);
+        public DialogOption PositiveOption { get; set; } = new DialogOption("Yes", DialogOptionTag.Positive);
 
         /// <summary>
         /// 消极选项
         /// </summary>
-        public DialogOption NegativeOption { get; set; } = new DialogOption("No", DialogOptionType.Negative);
+        public DialogOption NegativeOption { get; set; } = new DialogOption("No", DialogOptionTag.Negative);
 
         /// <summary>
         /// <inheritdoc/>

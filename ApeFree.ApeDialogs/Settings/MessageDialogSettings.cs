@@ -7,7 +7,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 确认选项
         /// </summary>
-        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionType.Neutral);
+        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionTag.Neutral);
 
         /// <summary>
         /// <inheritdoc/>

@@ -8,17 +8,17 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 确认选项
         /// </summary>
-        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionType.Positive);
+        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
         /// 取消选项
         /// </summary>
-        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionType.Negative, callback: DefaultCancelOptionHandler);
+        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionTag.Negative, callback: DefaultCancelOptionHandler);
 
         /// <summary>
         /// 清空选项
         /// </summary>
-        public DialogOption ClearOption { get; set; } = new DialogOption("Clear", DialogOptionType.Functional);
+        public DialogOption ClearOption { get; set; } = new DialogOption("Clear", DialogOptionTag.Functional);
 
         /// <summary>
         /// 默认输入文本
