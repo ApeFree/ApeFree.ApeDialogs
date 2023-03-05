@@ -18,7 +18,7 @@ namespace ApeFree.ApeDialogs.Core
         public event DialogEventHandler Dismissing;
         public event DialogEventHandler Dismissed;
 
-        public Result<TResult> Result { get; protected set; } = new Result<TResult>();
+        public Result<TResult> Result { get;} = new Result<TResult>();
         public TContext Context { get; protected set; }
         public TView ContentView { get; set; }
         public abstract string Title { get; set; }
@@ -30,7 +30,7 @@ namespace ApeFree.ApeDialogs.Core
             if (!result)
             {
                 PrecheckFailsCallback();
-                Result = new Result<TResult>();
+                Result.UpdateResultData(default);
             }
             return result;
         }
@@ -43,13 +43,10 @@ namespace ApeFree.ApeDialogs.Core
         /// <summary>
         /// 设置选项
         /// </summary>
-        /// <param name="text">选项名</param>
+        /// <param name="option">选项信息</param>
         /// <param name="onClick">单击动作</param>
         /// <returns></returns>
         public abstract TOption AddOption(DialogOption option, Action<IDialog, TOption> onClick = null);
-
-
-        protected abstract TOption CreateOptionHandler(DialogOption option);
 
         /// <summary>
         /// 清空选项
