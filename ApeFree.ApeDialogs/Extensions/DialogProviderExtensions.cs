@@ -32,6 +32,7 @@ namespace ApeFree.ApeDialogs
         public static IDialog<TItem> CreateSelectionDialog<TItem, TContext>(this DialogProvider<TContext> provider, IEnumerable<TItem> collection, TItem defaultSelectedItem, Action<SelectionDialogSettings<TItem>> settingsHandler, Action<IDialog<TItem>> dialogHandler = null, TContext context = default)
         {
             var settings = new SelectionDialogSettings<TItem>();
+            settings.OptionTagColors = provider.OptionTagColors;
             // 通过回调交由业务层完善参数
             settingsHandler?.Invoke(settings);
             var dialog = provider.CreateSelectionDialog(settings, collection, defaultSelectedItem, context);
@@ -41,6 +42,7 @@ namespace ApeFree.ApeDialogs
         public static IDialog<IEnumerable<TItem>> CreateMultipleSelectionDialog<TItem, TContext>(this DialogProvider<TContext> provider, IEnumerable<TItem> collection, IEnumerable<TItem> defaultSelectedItems, Action<MultipleSelectionDialogSettings<TItem>> settingsHandler, Action<IDialog<IEnumerable<TItem>>> dialogHandler = null, TContext context = default)
         {
             var settings = new MultipleSelectionDialogSettings<TItem>();
+            settings.OptionTagColors = provider.OptionTagColors;
             // 通过回调交由业务层完善参数
             settingsHandler?.Invoke(settings);
             var dialog = provider.CreateMultipleSelectionDialog(settings, collection, defaultSelectedItems, context);
