@@ -23,25 +23,6 @@ namespace ApeFree.ApeDialogs.Core
         public TView ContentView { get; set; }
         public abstract string Title { get; set; }
         public abstract string Content { get; set; }
-        protected Func<TView, TResult> ExtractResultFromViewHandler { get; set; }
-
-        /// <summary>
-        /// 从视图中提取结果
-        /// </summary>
-        /// <returns></returns>
-        public virtual TResult ExtractResultFromView()
-        {
-            if (ExtractResultFromViewHandler == null)
-            {
-                return default(TResult);
-            }
-            else
-            {
-                var data = ExtractResultFromViewHandler.Invoke(ContentView);
-                Result = new Result<TResult>(data);
-                return data;
-            }
-        }
 
         public virtual bool PerformPrecheck()
         {
