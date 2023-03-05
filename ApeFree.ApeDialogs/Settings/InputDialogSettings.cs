@@ -21,9 +21,9 @@ namespace ApeFree.ApeDialogs.Settings
         public DialogOption ClearOption { get; set; } = new DialogOption("Clear", DialogOptionType.Functional);
 
         /// <summary>
-        /// 默认内容
+        /// 默认输入文本
         /// </summary>
-        public string DefaultContent { get; set; } = string.Empty;
+        public string DefaultText { get; set; } = string.Empty;
 
         /// <summary>
         /// 允许输入内容为空
