@@ -33,12 +33,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 最大输入长度
         /// </summary>
-        public byte MaximumLength { get; set; }
+        public int MaximumLength { get; set; } = 0;
 
         /// <summary>
         /// 最小输入长度
         /// </summary>
-        public byte MinimumLength { get; set; }
+        public int MinimumLength { get; set; } = int.MaxValue;
 
         /// <summary>
         /// 是否多行
