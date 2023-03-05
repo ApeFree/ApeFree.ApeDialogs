@@ -21,6 +21,18 @@ namespace ApeFree.ApeDialogs
     public abstract partial class DialogProvider<TContext>
     {
         /// <summary>
+        /// 选项标签颜色表
+        /// </summary>
+        public Dictionary<DialogOptionTag, Color> OptionTagColors { get; } = new Dictionary<DialogOptionTag, Color>()
+        {
+            {DialogOptionTag.Neutral, Color.FromArgb(0,122,204)},
+            {DialogOptionTag.Positive, Color.ForestGreen},
+            {DialogOptionTag.Negative, Color.IndianRed},
+            {DialogOptionTag.Functional, Color.FromArgb(0,122,204) },
+            {DialogOptionTag.Special,  Color.MediumPurple},
+        };
+
+        /// <summary>
         /// 创建消息对话框
         /// </summary>
         /// <param name="settings">配置参数</param>
