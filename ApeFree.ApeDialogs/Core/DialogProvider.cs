@@ -2,18 +2,11 @@
 using ApeFree.ApeDialogs.Settings;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace ApeFree.ApeDialogs
 {
-    //public static class DialogProviderExtensions
-    //{
-    //    public static IDialog<bool> CreateMessageDialog<TContext>(this DialogProvider<TContext> provider, Action<MessageDialogSettings> settingsHandler, TContext context)
-    //    {
-    //        MessageDialogSettings settings = new MessageDialogSettings();
-    //        settingsHandler.Invoke(settings);
-    //        return provider.CreateMessageDialog(settings, context);
-    //    }
-    //}
 
     /// <summary>
     /// Dialog提供器接口
