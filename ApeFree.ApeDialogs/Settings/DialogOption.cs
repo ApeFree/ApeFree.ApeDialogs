@@ -19,20 +19,20 @@ namespace ApeFree.ApeDialogs.Settings
         public bool Enabled { get; set; }
 
         /// <summary>
-        /// 选项类型
+        /// 选项标签
         /// </summary>
-        public DialogOptionType OptionType { get; set; }
+        public DialogOptionTag OptionTag { get; set; }
 
         /// <summary>
         /// 选项被选中时的回调过程 
         /// </summary>
         public Action<object, OptionSelectedEventArgs> OptionSelectedCallback { get; set; }
 
-        public DialogOption(string text = null, DialogOptionType optionType = DialogOptionType.Neutral, bool enabled = true, Action<object, OptionSelectedEventArgs> callback = null)
+        public DialogOption(string text = null, DialogOptionTag optionTag = DialogOptionTag.Neutral, bool enabled = true, Action<object, OptionSelectedEventArgs> callback = null)
         {
             Text = text;
             Enabled = enabled;
-            OptionType = optionType;
+            OptionTag = optionTag;
             OptionSelectedCallback = callback;
         }
     }

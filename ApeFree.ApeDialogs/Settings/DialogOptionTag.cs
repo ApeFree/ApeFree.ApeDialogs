@@ -3,7 +3,7 @@
     /// <summary>
     /// Dialog选项类型
     /// </summary>
-    public enum DialogOptionType : byte
+    public enum DialogOptionTag : byte
     {
         /// <summary>
         /// 中性的

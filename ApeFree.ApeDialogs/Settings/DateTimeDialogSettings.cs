@@ -8,17 +8,17 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 确认选项
         /// </summary>
-        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionType.Positive);
+        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
         /// 取消选项
         /// </summary>
-        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionType.Negative, callback: DefaultCancelOptionHandler);
+        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionTag.Negative, callback: DefaultCancelOptionHandler);
 
         /// <summary>
         /// 当前时间选项
         /// </summary>
-        public DialogOption CurrentTimeOption { get; set; } = new DialogOption("Now", DialogOptionType.Functional);
+        public DialogOption CurrentTimeOption { get; set; } = new DialogOption("Now", DialogOptionTag.Functional);
 
         /// <summary>
         /// 日期时间选择精度
