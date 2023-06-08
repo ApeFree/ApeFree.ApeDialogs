@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace ApeFree.ApeDialogs.Settings
 {
+    /// <summary>
+    /// 选择Dialog设置
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class SelectionDialogSettings<T> : DialogSettings<T>
     {
         /// <summary>
