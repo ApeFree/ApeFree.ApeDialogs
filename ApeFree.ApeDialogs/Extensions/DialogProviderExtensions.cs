@@ -55,6 +55,11 @@ namespace ApeFree.ApeDialogs
             return provider.CreateDialog("CreateDateTimeDialog", null, settingsHandler, dialogHandler, context);
         }
 
+        public static IDialog<DataEntrySheet> CreateDataEntrySheetDialog<TContext>(this DialogProvider<TContext> provider, Action<DataEntrySheetDialogSettings> settingsHandler, Action<IDialog<DataEntrySheet>> dialogHandler = null, TContext context = default)
+        {
+            return provider.CreateDialog("CreateDataEntrySheetDialog", null, settingsHandler, dialogHandler, context);
+        }
+
         internal static IDialog<TResult> CreateDialog<TSettings, TResult, TContext>(this DialogProvider<TContext> provider, string methodName, IEnumerable<object> attachedParams, Action<TSettings> settingsHandler, Action<IDialog<TResult>> dialogHandler = null, TContext context = default) where TSettings : DialogSettings<TResult>
         {
             // 构造Dialog Settings对象

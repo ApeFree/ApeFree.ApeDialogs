@@ -80,5 +80,14 @@ namespace ApeFree.ApeDialogs
         /// <param name="context">上下文</param>
         /// <returns></returns>
         public abstract IDialog<DateTime> CreateDateTimeDialog(DateTimeDialogSettings settings, TContext context);
+
+        /// <summary>
+        /// 创建多字段表单对话框
+        /// </summary>
+        /// <param name="sheet">表单</param>
+        /// <param name="settings">配置参数</param>
+        /// <param name="context">上下文</param>
+        /// <returns></returns>
+        public abstract IDialog<DataEntrySheet> CreateDataEntrySheetDialog(DataEntrySheet sheet, DataEntrySheetDialogSettings settings, TContext context);
     }
 }
