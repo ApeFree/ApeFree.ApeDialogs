@@ -72,14 +72,22 @@ namespace ApeFree.ApeDialogs.Settings
     /// </summary>
     public abstract class SheetField
     {
-        protected SheetField(FieldType fieldType)
-        {
-            FieldType = fieldType;
-        }
+        public abstract FieldType FieldType { get; }
 
-        public FieldType FieldType { get; }
+        /// <summary>
+        /// 标题
+        /// </summary>
         public string Title { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 数据
+        /// </summary>
         public object Data { get; set; }
+
+        /// <summary>
+        /// 数据有效性检查
+        /// </summary>
+        public Func<object, bool> DataValidityCheck { get; set; }
     }
 
     /// <summary>
@@ -87,8 +95,6 @@ namespace ApeFree.ApeDialogs.Settings
     /// </summary>
     public abstract class SheetField<TData> : SheetField
     {
-        protected SheetField(FieldType fieldType) : base(fieldType) { }
-
         public new TData Data { get => (TData)base.Data; set => base.Data = value; }
     }
 
@@ -97,7 +103,7 @@ namespace ApeFree.ApeDialogs.Settings
     /// </summary>
     public class TextField : SheetField<string>
     {
-        public TextField() : base(FieldType.Text) { }
+        public override FieldType FieldType => FieldType.Text;
 
         public int MaximumLength { get; set; } = int.MaxValue;
         public bool IsMultiline { get; set; }
@@ -108,7 +114,7 @@ namespace ApeFree.ApeDialogs.Settings
     /// </summary>
     public class PasswordField : SheetField<string>
     {
-        public PasswordField() : base(FieldType.Password) { }
+        public override FieldType FieldType => FieldType.Password;
 
         public int MaximumLength { get; set; } = 128;
         public char PasswordChar { get; set; } = '●';
@@ -119,7 +125,7 @@ namespace ApeFree.ApeDialogs.Settings
     /// </summary>
     public class HexBytesField : SheetField<byte[]>
     {
-        public HexBytesField() : base(FieldType.HexBytes) { }
+        public override FieldType FieldType => FieldType.HexBytes;
 
         public bool AllowEmpty { get; set; }
         public int MaximumLength { get; set; } = int.MaxValue;
@@ -132,7 +138,7 @@ namespace ApeFree.ApeDialogs.Settings
     /// </summary>
     public class FilePathField : SheetField<string>
     {
-        public FilePathField() : base(FieldType.FilePath) { }
+        public override FieldType FieldType => FieldType.FilePath;
 
         public string BrowseButtonText { get; set; } = "Browse...";
     }
@@ -142,7 +148,7 @@ namespace ApeFree.ApeDialogs.Settings
     /// </summary>
     public class NumberField : SheetField<decimal>
     {
-        public NumberField() : base(FieldType.Number) { }
+        public override FieldType FieldType => FieldType.Number;
 
         /// <summary>
         /// 保留小数的位数
@@ -166,7 +172,7 @@ namespace ApeFree.ApeDialogs.Settings
     /// <typeparam name="TItem"></typeparam>
     public class SingleChoiceField : SheetField<object>
     {
-        public SingleChoiceField() : base(FieldType.SingleChoice) { }
+        public override FieldType FieldType => FieldType.SingleChoice;
 
         public object[] Items { get; set; }
         public Func<object, string> ItemDisplayTextConvertHandler { get; set; } = defaultItemDisplayTextConvertHandle;
@@ -180,7 +186,8 @@ namespace ApeFree.ApeDialogs.Settings
     /// <typeparam name="TItem"></typeparam>
     public class MultipleChoiceField : SheetField<object[]>
     {
-        public MultipleChoiceField() : base(FieldType.MultipleChoice)
+        public override FieldType FieldType => FieldType.MultipleChoice;
+        public MultipleChoiceField()
         {
             Data = new object[0];
         }
@@ -196,7 +203,7 @@ namespace ApeFree.ApeDialogs.Settings
     /// </summary>
     public class DateTimeField : SheetField<DateTime>
     {
-        public DateTimeField() : base(FieldType.DateTime) { }
+        public override FieldType FieldType => FieldType.DateTime;
 
         public string DateTimeFormat { get; set; } = "yyyy-MM-dd hh:mm:ss";
     }
