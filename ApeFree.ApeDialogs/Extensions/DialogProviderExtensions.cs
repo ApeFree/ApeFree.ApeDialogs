@@ -50,7 +50,7 @@ namespace ApeFree.ApeDialogs
             return dialog;
         }
 
-        public static IDialog<bool> CreateDateTimeDialog<TContext>(this DialogProvider<TContext> provider, Action<MessageDialogSettings> settingsHandler, Action<IDialog<bool>> dialogHandler = null, TContext context = default)
+        public static IDialog<DateTime> CreateDateTimeDialog<TContext>(this DialogProvider<TContext> provider, Action<DateTimeDialogSettings> settingsHandler, Action<IDialog<DateTime>> dialogHandler = null, TContext context = default)
         {
             return provider.CreateDialog("CreateDateTimeDialog", null, settingsHandler, dialogHandler, context);
         }

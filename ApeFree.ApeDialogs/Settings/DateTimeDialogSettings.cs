@@ -21,9 +21,9 @@ namespace ApeFree.ApeDialogs.Settings
         public DialogOption CurrentTimeOption { get; set; } = new DialogOption("Now", DialogOptionTag.Functional);
 
         /// <summary>
-        /// 日期时间选择精度
+        /// 日期格式
         /// </summary>
-        public DateTimePrecision Precision { get; set; }
+        public string DateTimeFormat { get; set; } = "yyyy-MM-dd hh:mm:ss";
 
         /// <summary>
         /// <inheritdoc/>
