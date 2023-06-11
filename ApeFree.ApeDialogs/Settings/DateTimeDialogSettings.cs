@@ -26,6 +26,11 @@ namespace ApeFree.ApeDialogs.Settings
         public string DateTimeFormat { get; set; } = "yyyy-MM-dd hh:mm:ss";
 
         /// <summary>
+        /// 默认的时间
+        /// </summary>
+        public DateTime DefaultDateTime { get; set; } = new DateTime(2000, 1, 1);
+
+        /// <summary>
         /// <inheritdoc/>
         /// </summary>
         /// <returns>Dialog默认选项集合</returns>
