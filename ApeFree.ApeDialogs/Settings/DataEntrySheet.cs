@@ -85,9 +85,10 @@ namespace ApeFree.ApeDialogs.Settings
         public object Data { get; set; }
 
         /// <summary>
-        /// 数据有效性检查
+        /// 执行数据有效性检查
         /// </summary>
-        public Func<object, bool> DataValidityCheck { get; set; }
+        /// <returns></returns>
+        public abstract bool ValidityCheck();
     }
 
     /// <summary>
@@ -95,7 +96,25 @@ namespace ApeFree.ApeDialogs.Settings
     /// </summary>
     public abstract class SheetField<TData> : SheetField
     {
+        /// <summary>
+        /// 数据
+        /// </summary>
         public new TData Data { get => (TData)base.Data; set => base.Data = value; }
+
+        /// <summary>
+        /// 数据有效性检查过程
+        /// </summary>
+        public Func<TData, bool> ValidityCheckHandler { get; set; }
+
+        public override bool ValidityCheck()
+        {
+            if (ValidityCheckHandler == null)
+            {
+                return true;
+            }
+
+            return ValidityCheckHandler.Invoke(Data);
+        }
     }
 
     /// <summary>
