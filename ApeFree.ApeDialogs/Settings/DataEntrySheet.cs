@@ -62,9 +62,69 @@ namespace ApeFree.ApeDialogs.Settings
 
         public void AddSingleChoiceField(SingleChoiceField field) => AddField(field);
 
+        public void AddComboBoxField(ComboBoxField field) => AddField(field);
+
         public void AddMultipleChoiceField(MultipleChoiceField field) => AddField(field);
 
         public void AddDateTimeField(DateTimeField field) => AddField(field);
+
+        public void AddPicturePathField(PicturePathField field) => AddField(field);
+    }
+
+    /// <summary>
+    /// 字段类型
+    /// </summary>
+    public enum FieldType
+    {
+        /// <summary>
+        /// 文本
+        /// </summary>
+        Text,
+
+        /// <summary>
+        /// 密码文本
+        /// </summary>
+        Password,
+
+        /// <summary>
+        /// 16进制字节数组
+        /// </summary>
+        HexBytes,
+
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        FilePath,
+
+        /// <summary>
+        /// 图片文件路径
+        /// </summary>
+        PicturePath,
+
+        /// <summary>
+        /// 数值
+        /// </summary>
+        Number,
+
+        /// <summary>
+        /// 下拉列表
+        /// </summary>
+        ComboBox,
+
+        /// <summary>
+        /// 单选
+        /// </summary>
+        SingleChoice,
+
+        /// <summary>
+        /// 多选
+        /// </summary>
+        MultipleChoice,
+
+        /// <summary>
+        /// 日期
+        /// </summary>
+        DateTime,
     }
 
     /// <summary>
@@ -88,7 +148,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// 执行数据有效性检查
         /// </summary>
         /// <returns></returns>
-        public abstract bool ValidityCheck();
+        public abstract FormatCheckResult ValidityCheck();
     }
 
     /// <summary>
@@ -104,13 +164,13 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 数据有效性检查过程
         /// </summary>
-        public Func<TData, bool> ValidityCheckHandler { get; set; }
+        public Func<TData, FormatCheckResult> ValidityCheckHandler { get; set; }
 
-        public override bool ValidityCheck()
+        public override FormatCheckResult ValidityCheck()
         {
             if (ValidityCheckHandler == null)
             {
-                return true;
+                return FormatCheckResult.Success;
             }
 
             return ValidityCheckHandler.Invoke(Data);
@@ -162,6 +222,11 @@ namespace ApeFree.ApeDialogs.Settings
         public string BrowseButtonText { get; set; } = "Browse...";
     }
 
+    public class PicturePathField : FilePathField
+    {
+        public override FieldType FieldType => FieldType.PicturePath;
+    }
+
     /// <summary>
     /// 数值类型的表单字段
     /// </summary>
@@ -188,7 +253,6 @@ namespace ApeFree.ApeDialogs.Settings
     /// <summary>
     /// 单选类型的表单字段
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
     public class SingleChoiceField : SheetField<object>
     {
         public override FieldType FieldType => FieldType.SingleChoice;
@@ -200,9 +264,16 @@ namespace ApeFree.ApeDialogs.Settings
     }
 
     /// <summary>
+    /// 单选类型的表单字段
+    /// </summary>
+    public class ComboBoxField : SingleChoiceField
+    {
+        public override FieldType FieldType => FieldType.ComboBox;
+    }
+
+    /// <summary>
     /// 多选类型的表单字段
     /// </summary>
-    /// <typeparam name="TItem"></typeparam>
     public class MultipleChoiceField : SheetField<object[]>
     {
         public override FieldType FieldType => FieldType.MultipleChoice;
@@ -228,48 +299,29 @@ namespace ApeFree.ApeDialogs.Settings
     }
 
     /// <summary>
-    /// 字段类型
+    /// 格式检查结果
     /// </summary>
-    public enum FieldType
+    public struct FormatCheckResult
     {
         /// <summary>
-        /// 文本
+        /// 校验成功的结果
         /// </summary>
-        Text,
+        public readonly static FormatCheckResult Success = new FormatCheckResult(true, null);
 
-        /// <summary>
-        /// 密码文本
-        /// </summary>
-        Password,
+        public bool IsSuccess { get; }
+        public string ErrorMessage { get; } = string.Empty;
 
-        /// <summary>
-        /// 16进制字节数组
-        /// </summary>
-        HexBytes,
+        public FormatCheckResult(string errorMessage)
+        {
+            IsSuccess = false;
+            ErrorMessage = errorMessage;
+        }
 
-        /// <summary>
-        /// 文件路径
-        /// </summary>
-        FilePath,
-
-        /// <summary>
-        /// 数值
-        /// </summary>
-        Number,
-
-        /// <summary>
-        /// 单选
-        /// </summary>
-        SingleChoice,
-
-        /// <summary>
-        /// 多选
-        /// </summary>
-        MultipleChoice,
-
-        /// <summary>
-        /// 日期
-        /// </summary>
-        DateTime,
+        public FormatCheckResult(bool isSuccess, string errorMessage)
+        {
+            IsSuccess = isSuccess;
+            ErrorMessage = errorMessage;
+        }
     }
+
 }

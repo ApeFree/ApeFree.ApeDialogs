@@ -56,7 +56,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 返回结果预校验
         /// </summary>
-        public Func<TResult, bool> PrecheckResult { get; set; }
+        public Func<TResult, FormatCheckResult> PrecheckResult { get; set; }
 
         /// <summary>
         /// 选项标签颜色表
