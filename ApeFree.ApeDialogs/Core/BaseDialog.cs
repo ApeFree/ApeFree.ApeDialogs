@@ -24,13 +24,17 @@ namespace ApeFree.ApeDialogs.Core
         public abstract string Title { get; set; }
         public abstract string Content { get; set; }
 
-        public virtual bool PerformPrecheck()
+        public virtual FormatCheckResult PerformPrecheck()
         {
-            var result = Settings.PrecheckResult?.Invoke(Result.Data) ?? true;
-            if (!result)
+            var result = Settings.PrecheckResult?.Invoke(Result.Data) ?? FormatCheckResult.Success;
+            if (!result.IsSuccess)
             {
-                PrecheckFailsCallback();
+                PrecheckFailsCallback(result);
                 Result.UpdateResultData(default);
+            }
+            else
+            {
+                Dismiss(false);
             }
             return result;
         }
@@ -38,7 +42,7 @@ namespace ApeFree.ApeDialogs.Core
         /// <summary>
         /// 预处理未通过时执行的回调
         /// </summary>
-        protected abstract void PrecheckFailsCallback();
+        protected abstract void PrecheckFailsCallback(FormatCheckResult result);
 
         /// <summary>
         /// 设置选项
