@@ -6,7 +6,7 @@ using System.Text;
 
 namespace ApeFree.ApeDialogs.Settings
 {
-    public static class DialogOptionsExtension
+    public static class DialogOptionsExtensions
     {
         /// <summary>
         /// 获取有效选项（所有文本非空的选项）
