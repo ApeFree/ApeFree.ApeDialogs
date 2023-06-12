@@ -28,7 +28,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 允许输入内容为空
         /// </summary>
-        public bool AllowEmpty { get; set; }
+        // public bool AllowEmpty { get; set; }
 
         /// <summary>
         /// 最大输入长度
@@ -38,7 +38,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 最小输入长度
         /// </summary>
-        public int MinimumLength { get; set; } = 0;
+        // public int MinimumLength { get; set; } = 0;
 
         /// <summary>
         /// 是否多行
