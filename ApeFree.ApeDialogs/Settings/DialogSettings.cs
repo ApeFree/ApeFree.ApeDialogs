@@ -28,11 +28,16 @@ namespace ApeFree.ApeDialogs.Settings
         /// 配色风格
         /// </summary>
         public ColorStyle ColorStyle { get; set; }
-
+        
         /// <summary>
         /// 对话框建议尺寸
         /// </summary>
         public Size? DialogSize { get; set; }
+
+        /// <summary>
+        /// 对话框默认字体
+        /// </summary>
+        public Font Font { get; set; }
 
         /// <summary>
         /// 获取对话框的选项信息
