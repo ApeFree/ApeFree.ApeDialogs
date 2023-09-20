@@ -40,6 +40,11 @@ namespace ApeFree.ApeDialogs.Settings
         public Font Font { get; set; }
 
         /// <summary>
+        /// 提示色
+        /// </summary>
+        public Color ReminderColor { get; set; }
+
+        /// <summary>
         /// 获取对话框的选项信息
         /// </summary>
         /// <returns></returns>
