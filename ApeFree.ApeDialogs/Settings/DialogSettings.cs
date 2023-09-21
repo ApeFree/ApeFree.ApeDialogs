@@ -42,7 +42,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 提示色
         /// </summary>
-        public Color ReminderColor { get; set; }
+        public Color ReminderColor { get; set; } = Color.FromArgb(0, 122, 204);
 
         /// <summary>
         /// 获取对话框的选项信息
