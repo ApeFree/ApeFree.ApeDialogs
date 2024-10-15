@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace ApeFree.ApeDialogs.Core
@@ -24,6 +25,7 @@ namespace ApeFree.ApeDialogs.Core
         /// 更新结果数据
         /// </summary>
         /// <param name="value"></param>
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public void UpdateResultData(T value)
         {
             Data = value;

@@ -89,5 +89,23 @@ namespace ApeFree.ApeDialogs
         /// <param name="context">上下文</param>
         /// <returns></returns>
         public abstract IDialog<DataEntrySheet> CreateDataEntrySheetDialog(DataEntrySheet sheet, DataEntrySheetDialogSettings settings, TContext context);
+
+        /// <summary>
+        /// 创建打开文件对话框
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="settings"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public abstract IDialog<string[]> CreateOpenFileDialog(string path, OpenFileDialogSettings settings, TContext context);
+
+        /// <summary>
+        /// 创建打开文件夹对话框
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="settings"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public abstract IDialog<string[]> CreateOpenFolderDialog(string path, OpenFolderDialogSettings settings, TContext context);
     }
 }
