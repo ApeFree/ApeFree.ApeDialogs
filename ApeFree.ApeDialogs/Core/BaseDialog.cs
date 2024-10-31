@@ -64,7 +64,6 @@ namespace ApeFree.ApeDialogs.Core
         {
             RaiseShowing();
             ShowHandler();
-            RaiseShown();
         }
 
         /// <summary>
