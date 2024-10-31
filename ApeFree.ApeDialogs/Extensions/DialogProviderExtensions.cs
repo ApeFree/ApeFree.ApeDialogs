@@ -57,7 +57,17 @@ namespace ApeFree.ApeDialogs
 
         public static IDialog<DataEntrySheet> CreateDataEntrySheetDialog<TContext>(this DialogProvider<TContext> provider, DataEntrySheet sheet, Action<DataEntrySheetDialogSettings> settingsHandler, Action<IDialog<DataEntrySheet>> dialogHandler = null, TContext context = default)
         {
-            return provider.CreateDialog("CreateDataEntrySheetDialog", new object[]{ sheet}, settingsHandler, dialogHandler, context);
+            return provider.CreateDialog("CreateDataEntrySheetDialog", new object[] { sheet }, settingsHandler, dialogHandler, context);
+        }
+
+        public static IDialog<string[]> CreateOpenFileDialog<TContext>(this DialogProvider<TContext> provider, string path, Action<OpenFileDialogSettings> settingsHandler, Action<IDialog<string[]>> dialogHandler = null, TContext context = default)
+        {
+            return provider.CreateDialog("CreateOpenFileDialog", new object[] { path }, settingsHandler, dialogHandler, context);
+        }
+
+        public static IDialog<string[]> CreateOpenFolderDialog<TContext>(this DialogProvider<TContext> provider, string path, Action<OpenFolderDialogSettings> settingsHandler, Action<IDialog<string[]>> dialogHandler = null, TContext context = default)
+        {
+            return provider.CreateDialog("CreateOpenFolderDialog", new object[] { path }, settingsHandler, dialogHandler, context);
         }
 
         internal static IDialog<TResult> CreateDialog<TSettings, TResult, TContext>(this DialogProvider<TContext> provider, string methodName, IEnumerable<object> attachedParams, Action<TSettings> settingsHandler, Action<IDialog<TResult>> dialogHandler = null, TContext context = default) where TSettings : DialogSettings<TResult>
