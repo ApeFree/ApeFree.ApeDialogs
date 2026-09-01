@@ -1,55 +1,44 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+using System.Collections.Generic;
+using ApeFree.ApeDialogs.Theme;
 
 namespace ApeFree.ApeDialogs.Settings
 {
+    /// <summary>
+    /// 输入对话框配置。
+    /// </summary>
     public class InputDialogSettings : DialogSettings<string>
     {
         /// <summary>
-        /// 确认选项
+        /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionTag.Positive);
+        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
-        /// 取消选项
+        /// 取消选项。
         /// </summary>
-        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionTag.Negative, callback: DefaultCancelOptionHandler);
+        public DialogOption CancelOption { get; init; } = DialogOption.CreateCancelOption();
 
         /// <summary>
-        /// 清空选项
+        /// 清空选项。
         /// </summary>
-        public DialogOption ClearOption { get; set; } = new DialogOption("Clear", DialogOptionTag.Functional);
+        public DialogOption ClearOption { get; init; } = new("Clear", DialogOptionTag.Functional);
 
         /// <summary>
-        /// 默认输入文本
+        /// 默认输入文本。
         /// </summary>
-        public string DefaultText { get; set; } = string.Empty;
+        public string DefaultText { get; init; } = string.Empty;
 
         /// <summary>
-        /// 允许输入内容为空
+        /// 最大输入长度。
         /// </summary>
-        // public bool AllowEmpty { get; set; }
+        public int MaximumLength { get; init; } = int.MaxValue;
 
         /// <summary>
-        /// 最大输入长度
+        /// 是否多行输入。
         /// </summary>
-        public int MaximumLength { get; set; } = int.MaxValue;
+        public bool IsMultiline { get; init; }
 
-        /// <summary>
-        /// 最小输入长度
-        /// </summary>
-        // public int MinimumLength { get; set; } = 0;
-
-        /// <summary>
-        /// 是否多行
-        /// </summary>
-        public bool IsMultiline { get; set; }
-
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
-        /// <returns>Dialog默认选项集合</returns>
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler() => new DialogOption[] { ConfirmOption, CancelOption, ClearOption };
-
+        public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption, CancelOption, ClearOption };
     }
 }

@@ -1,39 +1,55 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using ApeFree.ApeDialogs.Theme;
 
 namespace ApeFree.ApeDialogs.Settings
 {
+    /// <summary>
+    /// 时间精度。
+    /// </summary>
+    public enum DateTimePrecision : byte
+    {
+        DateTime,
+        Date,
+        Time,
+    }
+
+    /// <summary>
+    /// 日期时间对话框配置。
+    /// </summary>
     public class DateTimeDialogSettings : DialogSettings<DateTime>
     {
         /// <summary>
-        /// 确认选项
+        /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionTag.Positive);
+        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
-        /// 取消选项
+        /// 取消选项。
         /// </summary>
-        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionTag.Negative, callback: DefaultCancelOptionHandler);
+        public DialogOption CancelOption { get; init; } = DialogOption.CreateCancelOption();
 
         /// <summary>
-        /// 当前时间选项
+        /// 当前时间选项。
         /// </summary>
-        public DialogOption CurrentTimeOption { get; set; } = new DialogOption("Now", DialogOptionTag.Functional);
+        public DialogOption CurrentTimeOption { get; init; } = new("Now", DialogOptionTag.Functional);
 
         /// <summary>
-        /// 日期格式
+        /// 日期时间格式（24 小时制）。
         /// </summary>
-        public string DateTimeFormat { get; set; } = "yyyy-MM-dd hh:mm:ss";
+        public string DateTimeFormat { get; init; } = "yyyy-MM-dd HH:mm:ss";
 
         /// <summary>
-        /// 默认的时间
+        /// 默认时间。
         /// </summary>
-        public DateTime DefaultDateTime { get; set; } = new DateTime(2000, 1, 1);
+        public DateTime DefaultDateTime { get; init; } = new(2000, 1, 1);
 
         /// <summary>
+        /// 时间精度。
+        /// </summary>
+        public DateTimePrecision Precision { get; init; } = DateTimePrecision.DateTime;
+
         /// <inheritdoc/>
-        /// </summary>
-        /// <returns>Dialog默认选项集合</returns>
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler() => new DialogOption[] { ConfirmOption, CancelOption, CurrentTimeOption };
+        public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption, CancelOption, CurrentTimeOption };
     }
 }

@@ -1,71 +1,68 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using ApeFree.ApeDialogs.Theme;
 
 namespace ApeFree.ApeDialogs.Settings
 {
     /// <summary>
-    /// 打开文件Dialog设置
+    /// 打开文件对话框配置。
     /// </summary>
-    public class OpenFileDialogSettings : DialogSettings<string[]>
+    public class OpenFileDialogSettings : DialogSettings<IReadOnlyList<string>>
     {
         /// <summary>
-        /// 确认选项
+        /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionTag.Positive);
+        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
-        /// 取消选项
+        /// 取消选项。
         /// </summary>
-        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionTag.Negative, enabled: true, DefaultCancelOptionHandler);
+        public DialogOption CancelOption { get; init; } = DialogOption.CreateCancelOption();
 
         /// <summary>
-        /// 搜索通配符
+        /// 初始目录；为空时由实现方决定（如上次目录或默认目录）。
         /// </summary>
-        public string SearchPattern { get; set; } = "*";
+        public string? InitialPath { get; init; }
 
         /// <summary>
-        /// 是否支持多选
+        /// 搜索通配符。
         /// </summary>
-        public bool MultiSelect { get; set; }
+        public string SearchPattern { get; init; } = "*";
 
-        public OpenFileDialogSettings()
-        {
-            DialogSize = new System.Drawing.Size(600, 500);
-        }
+        /// <summary>
+        /// 是否支持多选。
+        /// </summary>
+        public bool MultiSelect { get; init; }
 
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()
-        {
-            return new DialogOption[] { ConfirmOption, CancelOption };
-        }
+        /// <inheritdoc/>
+        public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption, CancelOption };
     }
 
     /// <summary>
-    /// 打开文件Dialog设置
+    /// 打开文件夹对话框配置。
     /// </summary>
-    public class OpenFolderDialogSettings : DialogSettings<string[]>
+    public class OpenFolderDialogSettings : DialogSettings<IReadOnlyList<string>>
     {
         /// <summary>
-        /// 确认选项
+        /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionTag.Positive);
+        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
-        /// 取消选项
+        /// 取消选项。
         /// </summary>
-        public DialogOption CancelOption { get; set; } = new DialogOption("Cancel", DialogOptionTag.Negative, enabled: true, DefaultCancelOptionHandler);
+        public DialogOption CancelOption { get; init; } = DialogOption.CreateCancelOption();
 
         /// <summary>
-        /// 是否支持多选
+        /// 初始目录；为空时由实现方决定（如上次目录或默认目录）。
         /// </summary>
-        public bool MultiSelect { get; set; }
+        public string? InitialPath { get; init; }
 
-        public OpenFolderDialogSettings()
-        {
-            DialogSize = new System.Drawing.Size(600, 500);
-        }
+        /// <summary>
+        /// 是否支持多选。
+        /// </summary>
+        public bool MultiSelect { get; init; }
 
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler()
-        {
-            return new DialogOption[] { ConfirmOption, CancelOption };
-        }
+        /// <inheritdoc/>
+        public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption, CancelOption };
     }
 }

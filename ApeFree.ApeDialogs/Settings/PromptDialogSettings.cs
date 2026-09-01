@@ -1,23 +1,24 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using ApeFree.ApeDialogs.Theme;
 
 namespace ApeFree.ApeDialogs.Settings
 {
+    /// <summary>
+    /// 提示对话框配置（Yes / No）。
+    /// </summary>
     public class PromptDialogSettings : DialogSettings<bool>
     {
         /// <summary>
-        /// 积极选项
+        /// 积极选项（Yes）。
         /// </summary>
-        public DialogOption PositiveOption { get; set; } = new DialogOption("Yes", DialogOptionTag.Positive);
+        public DialogOption PositiveOption { get; init; } = new("Yes", DialogOptionTag.Positive);
 
         /// <summary>
-        /// 消极选项
+        /// 消极选项（No）。
         /// </summary>
-        public DialogOption NegativeOption { get; set; } = new DialogOption("No", DialogOptionTag.Negative);
+        public DialogOption NegativeOption { get; init; } = new("No", DialogOptionTag.Negative);
 
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
-        /// <returns>Dialog默认选项集合</returns>
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler() => new DialogOption[] { PositiveOption, NegativeOption };
+        public override IReadOnlyList<DialogOption> DefaultOptions => new[] { PositiveOption, NegativeOption };
     }
 }

@@ -1,37 +1,51 @@
-﻿using ApeFree.ApeDialogs.Settings;
 using System;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace ApeFree.ApeDialogs.Core
 {
-    public delegate void DialogEventHandler(IDialog dialog, EventArgs e);
-
     /// <summary>
-    /// 对话框标准接口
-    /// </summary>
-    public interface IDialog<TResult> : IDialog
-    {
-        Result<TResult> Result { get; }
-    }
-
-    /// <summary>
-    /// 对话框标准接口
+    /// Dialog 标准接口（消费者视角）。
     /// </summary>
     public interface IDialog
     {
-        event DialogEventHandler Showing;
-        event DialogEventHandler Shown;
-        event DialogEventHandler Dismissing;
-        event DialogEventHandler Dismissed;
+        /// <summary>
+        /// 显示前触发。
+        /// </summary>
+        event EventHandler<DialogEventArgs>? Showing;
 
         /// <summary>
-        /// 显示Dialog
+        /// 显示完成后触发。
         /// </summary>
-        void Show();
+        event EventHandler<DialogEventArgs>? Shown;
 
         /// <summary>
-        /// 销毁Dialog
+        /// 销毁前触发。
         /// </summary>
-        void Dismiss(bool isCancel);
+        event EventHandler<DialogEventArgs>? Dismissing;
+
+        /// <summary>
+        /// 销毁完成后触发。
+        /// </summary>
+        event EventHandler<DialogEventArgs>? Dismissed;
+
+        /// <summary>
+        /// 是否正在显示。
+        /// </summary>
+        bool IsShown { get; }
+    }
+
+    /// <summary>
+    /// 带返回结果的 Dialog 标准接口。
+    /// </summary>
+    /// <typeparam name="TResult">结果数据类型</typeparam>
+    public interface IDialog<TResult> : IDialog
+    {
+        /// <summary>
+        /// 异步显示 Dialog 并等待其结束。
+        /// 用户取消或 token 取消时返回 <see cref="DialogResult{T}.Canceled"/>，不抛异常。
+        /// </summary>
+        /// <param name="cancellationToken">取消等待（同时会关闭对话框）</param>
+        Task<DialogResult<TResult>> ShowAsync(CancellationToken cancellationToken = default);
     }
 }

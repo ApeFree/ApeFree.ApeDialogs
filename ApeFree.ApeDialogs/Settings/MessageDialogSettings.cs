@@ -1,18 +1,19 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using ApeFree.ApeDialogs.Theme;
 
 namespace ApeFree.ApeDialogs.Settings
 {
+    /// <summary>
+    /// 消息对话框配置。
+    /// </summary>
     public class MessageDialogSettings : DialogSettings<bool>
     {
         /// <summary>
-        /// 确认选项
+        /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; set; } = new DialogOption("Confirm", DialogOptionTag.Neutral);
+        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
 
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
-        /// <returns>Dialog默认选项集合</returns>
-        protected override IEnumerable<DialogOption> GetDefaultOptionsHandler() => new DialogOption[] { ConfirmOption };
+        public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption };
     }
 }

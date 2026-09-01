@@ -1,102 +1,81 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
+using ApeFree.ApeDialogs.Core;
+using ApeFree.ApeDialogs.Theme;
 
 namespace ApeFree.ApeDialogs.Settings
 {
     /// <summary>
-    /// Dialog选项
+    /// Dialog 通用配置。
     /// </summary>
-    public abstract class DialogSettings<TResult>
+    public abstract class DialogSettings
     {
         /// <summary>
-        /// 标题
+        /// 标题。
         /// </summary>
-        public string Title { get; set; }
+        public string Title { get; init; } = string.Empty;
 
         /// <summary>
-        /// 提示语内容
+        /// 提示语内容。
         /// </summary>
-        public string Content { get; set; }
+        public string? Content { get; init; }
 
         /// <summary>
-        /// 是否允许取消
+        /// 是否允许取消（如是否显示关闭按钮、Esc 是否生效）。
         /// </summary>
-        public bool Cancelable { get; set; }
+        public bool Cancelable { get; init; } = true;
 
         /// <summary>
-        /// 配色风格
+        /// 配色主题；为空时使用 <see cref="DefaultTheme"/>。
         /// </summary>
-        public ColorStyle ColorStyle { get; set; }
-        
-        /// <summary>
-        /// 对话框建议尺寸
-        /// </summary>
-        public Size? DialogSize { get; set; }
+        public IDialogTheme? Theme { get; init; }
 
         /// <summary>
-        /// 对话框默认字体
+        /// 建议尺寸；为空时由实现方决定默认尺寸。
         /// </summary>
-        public Font Font { get; set; }
+        public ApeSize? DialogSize { get; init; }
 
         /// <summary>
-        /// 提示色
+        /// 默认字体；为空时由实现方决定默认字体。
         /// </summary>
-        public Color ReminderColor { get; set; } = Color.FromArgb(0, 122, 204);
+        public DialogFont? Font { get; init; }
 
         /// <summary>
-        /// 获取对话框的选项信息
+        /// 自动关闭时长；设置后对话框在显示满该时长时以取消结果自动关闭。
         /// </summary>
-        /// <returns></returns>
-        protected abstract IEnumerable<DialogOption> GetDefaultOptionsHandler();
-
-        public IEnumerable<DialogOption> GetOptions()
-        {
-            return GetDefaultOptionsHandler().GetValidItems();
-        }
+        public TimeSpan? Duration { get; init; }
 
         /// <summary>
-        /// 返回结果预校验委托
+        /// 显示完成后的回调。
         /// </summary>
-        /// <typeparam name="TResult">返回结果类型</typeparam>
-        /// <param name="result">待检查值</param>
-        /// <returns></returns>
-        // public delegate bool PrecheckResultHandler<TResult>(TResult result);
+        public Action<IDialog>? OnShown { get; init; }
 
         /// <summary>
-        /// 返回结果预校验
+        /// 销毁完成后的回调。
         /// </summary>
-        public Func<TResult, FormatCheckResult> PrecheckResult { get; set; }
+        public Action<IDialog>? OnDismissed { get; init; }
 
         /// <summary>
-        /// 选项标签颜色表
+        /// 默认选项集合。
         /// </summary>
-        public Dictionary<DialogOptionTag, Color> OptionTagColors { get; internal set; }// = new Dictionary<DialogOptionTag, Color>();
-
-        /// <summary>
-        /// 默认的取消选项处理过程
-        /// </summary>
-        internal static readonly Action<object, OptionSelectedEventArgs> DefaultCancelOptionHandler = (s, e) => e.Dialog.Dismiss(true);
+        public virtual IReadOnlyList<DialogOption> DefaultOptions => new DialogOption[0];
     }
 
     /// <summary>
-    /// 配色风格
+    /// 带返回结果的 Dialog 通用配置。
     /// </summary>
-    public enum ColorStyle
+    /// <typeparam name="TResult">结果数据类型</typeparam>
+    public abstract class DialogSettings<TResult> : DialogSettings
     {
         /// <summary>
-        /// 明亮模式
+        /// 结果校验规则；提交结果时执行，失败则关闭前拦截并回调实现方。
         /// </summary>
-        Bright,
+        public Func<TResult, ValidationResult>? Validator { get; init; }
 
         /// <summary>
-        /// 夜间模式
+        /// 值实时变化回调（调节类 Dialog，如滑块）。
+        /// 仅用于观察/实时影响外界；取消 Dialog 并不会回滚已推送的值。
         /// </summary>
-        Night,
-
-        /// <summary>
-        /// 柔光模式
-        /// </summary>
-        // SoftLight,
+        public Action<TResult>? OnValueChanged { get; init; }
     }
 }

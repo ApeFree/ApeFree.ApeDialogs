@@ -1,111 +1,239 @@
-﻿using ApeFree.ApeDialogs.Settings;
 using System;
-using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using ApeFree.ApeDialogs.Settings;
 
 namespace ApeFree.ApeDialogs.Core
 {
-    public abstract class BaseDialog<TView, TOption, TContext, TResult> : IDialog<TResult>
+    /// <summary>
+    /// Dialog 实现辅助基类。实现方需实现视图相关的抽象成员。
+    /// </summary>
+    /// <typeparam name="TView">视图类型</typeparam>
+    /// <typeparam name="TOption">选项控件类型</typeparam>
+    /// <typeparam name="TContext">上下文类型</typeparam>
+    /// <typeparam name="TResult">结果数据类型</typeparam>
+    public abstract class BaseDialog<TView, TOption, TContext, TResult> : IDialogController<TResult>, IDisposable
     {
-        protected readonly DialogSettings<TResult> Settings;
+#if NET45 || NET451 || NET452
+        private readonly TaskCompletionSource<DialogResult<TResult>> _completionSource = new();
+#else
+        private readonly TaskCompletionSource<DialogResult<TResult>> _completionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+#endif
+        private readonly CancellationTokenSource _autoDismissCts = new();
+        private bool _disposed;
 
-        protected BaseDialog(DialogSettings<TResult> settings)
+        /// <summary>
+        /// 构造 Dialog。
+        /// </summary>
+        /// <param name="settings">配置参数</param>
+        /// <param name="context">上下文</param>
+        /// <param name="view">视图（可由实现方延迟绑定）</param>
+        protected BaseDialog(DialogSettings<TResult> settings, TContext? context = default, TView? view = default)
         {
-            Settings = settings;
+            Settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            Context = context;
+            View = view;
         }
 
-        public event DialogEventHandler Showing;
-        public event DialogEventHandler Shown;
-        public event DialogEventHandler Dismissing;
-        public event DialogEventHandler Dismissed;
+        /// <summary>
+        /// 装配设置中的默认选项（过滤文本为空的选项）。
+        /// 注意：不得在构造函数中调用虚方法，实现方应在构造函数末尾（实例字段全部就绪后）调用此方法。
+        /// </summary>
+        protected void AddDefaultOptions()
+        {
+            foreach (var option in Settings.DefaultOptions.Where(option => !string.IsNullOrWhiteSpace(option.Text)))
+            {
+                AddOption(option);
+            }
+        }
 
-        public Result<TResult> Result { get;} = new Result<TResult>();
-        public TContext Context { get; protected set; }
-        public TView ContentView { get; set; }
+        /// <summary>
+        /// 配置参数。
+        /// </summary>
+        protected DialogSettings<TResult> Settings { get; }
+
+        /// <summary>
+        /// 上下文。
+        /// </summary>
+        public TContext? Context { get; protected set; }
+
+        /// <summary>
+        /// 视图。
+        /// </summary>
+        public TView? View { get; protected set; }
+
+        /// <summary>
+        /// 标题。
+        /// </summary>
         public abstract string Title { get; set; }
+
+        /// <summary>
+        /// 内容。
+        /// </summary>
         public abstract string Content { get; set; }
 
-        public virtual FormatCheckResult PerformPrecheck()
+        /// <summary>
+        /// 是否正在显示。
+        /// </summary>
+        public bool IsShown { get; private set; }
+
+        /// <inheritdoc/>
+        public event EventHandler<DialogEventArgs>? Showing;
+
+        /// <inheritdoc/>
+        public event EventHandler<DialogEventArgs>? Shown;
+
+        /// <inheritdoc/>
+        public event EventHandler<DialogEventArgs>? Dismissing;
+
+        /// <inheritdoc/>
+        public event EventHandler<DialogEventArgs>? Dismissed;
+
+        /// <inheritdoc/>
+        public async Task<DialogResult<TResult>> ShowAsync(CancellationToken cancellationToken = default)
         {
-            var result = Settings.PrecheckResult?.Invoke(Result.Data) ?? FormatCheckResult.Success;
-            if (!result.IsSuccess)
+            if (cancellationToken.IsCancellationRequested)
             {
-                PrecheckFailsCallback(result);
-                Result.UpdateResultData(default);
+                return DialogResult<TResult>.Canceled;
             }
-            else
+
+            if (IsShown)
             {
-                Dismiss(false);
+                throw new InvalidOperationException("The dialog has already been shown.");
             }
-            return result;
+
+            using (cancellationToken.Register(() => Cancel()))
+            {
+                RaiseShowing();
+                ShowHandler();
+
+                if (Settings.Duration is TimeSpan duration && duration > TimeSpan.Zero)
+                {
+                    _ = AutoDismissAsync(duration);
+                }
+
+                return await _completionSource.Task.ConfigureAwait(false);
+            }
         }
 
         /// <summary>
-        /// 预处理未通过时执行的回调
+        /// 校验指定值是否符合设置中的校验规则，并尝试提交。
         /// </summary>
-        protected abstract void PrecheckFailsCallback(FormatCheckResult result);
+        /// <param name="value">待提交的值</param>
+        /// <returns>校验通过并提交成功返回 true；否则调用 <see cref="OnValidationFailed"/> 并返回 false</returns>
+        protected bool TrySubmit(TResult value)
+        {
+            var result = Settings.Validator?.Invoke(value) ?? ValidationResult.Success;
+
+            if (result.IsSuccess)
+            {
+                Dismiss(DialogResult<TResult>.Confirmed(value));
+                return true;
+            }
+
+            OnValidationFailed(result);
+            return false;
+        }
 
         /// <summary>
-        /// 设置选项
+        /// 校验失败时的回调，实现方在此展示错误提示（如抖动、Toast）。
         /// </summary>
-        /// <param name="option">选项信息</param>
-        /// <param name="onClick">单击动作</param>
-        /// <returns></returns>
-        public abstract TOption AddOption(DialogOption option, Action<IDialog, TOption> onClick = null);
+        protected virtual void OnValidationFailed(ValidationResult result)
+        {
+        }
+
+        /// <inheritdoc/>
+        public void Dismiss(DialogResult<TResult> result)
+        {
+            if (_completionSource.Task.IsCompleted)
+            {
+                return;
+            }
+
+            _completionSource.TrySetResult(result);
+            _autoDismissCts.Cancel();
+
+            RaiseDismissing();
+            DismissHandler();
+            IsShown = false;
+            RaiseDismissed();
+        }
+
+        /// <inheritdoc/>
+        public void Cancel() => Dismiss(DialogResult<TResult>.Canceled);
 
         /// <summary>
-        /// 清空选项
+        /// 添加选项。
+        /// </summary>
+        /// <param name="dialogOption">选项信息</param>
+        /// <returns>实现方对应的选项控件</returns>
+        public abstract TOption AddOption(DialogOption dialogOption);
+
+        /// <summary>
+        /// 清空选项。
         /// </summary>
         public abstract void ClearOptions();
 
         /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        public void Show()
-        {
-            RaiseShowing();
-            ShowHandler();
-        }
-
-        /// <summary>
-        /// <inheritdoc/>
-        /// </summary>
-        public void Dismiss(bool isCancel)
-        {
-            Result.IsCancel = isCancel;
-
-            RaiseDismissing();
-            DismissHandler();
-            RaiseDismissed();
-        }
-
-        /// <summary>
-        /// Dialog显示的实现
+        /// 显示视图的实现。
         /// </summary>
         protected abstract void ShowHandler();
 
         /// <summary>
-        /// Dialog销毁的实现
+        /// 销毁视图的实现。
         /// </summary>
         protected abstract void DismissHandler();
 
-        protected void RaiseShowing()
-        {
-            Showing?.Invoke(this, EventArgs.Empty);
-        }
-
+        /// <summary>
+        /// 触发 <see cref="Showing"/> 事件。由实现方在视图显示后调用。
+        /// </summary>
         protected void RaiseShown()
         {
-            Shown?.Invoke(this, EventArgs.Empty);
+            IsShown = true;
+            Shown?.Invoke(this, new DialogEventArgs());
+            Settings.OnShown?.Invoke(this);
         }
 
-        protected void RaiseDismissing()
+        private void RaiseShowing()
         {
-            Dismissing?.Invoke(this, EventArgs.Empty);
+            Showing?.Invoke(this, new DialogEventArgs());
         }
 
-        protected void RaiseDismissed()
+        private void RaiseDismissing()
         {
-            Dismissed?.Invoke(this, EventArgs.Empty);
+            Dismissing?.Invoke(this, new DialogEventArgs());
+        }
+
+        private void RaiseDismissed()
+        {
+            Dismissed?.Invoke(this, new DialogEventArgs());
+            Settings.OnDismissed?.Invoke(this);
+        }
+
+        private async Task AutoDismissAsync(TimeSpan duration)
+        {
+            try
+            {
+                await Task.Delay(duration, _autoDismissCts.Token).ConfigureAwait(false);
+                Cancel();
+            }
+            catch (OperationCanceledException)
+            {
+            }
+        }
+
+        /// <inheritdoc/>
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+            _autoDismissCts.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
