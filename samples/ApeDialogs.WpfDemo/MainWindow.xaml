@@ -1,0 +1,30 @@
+<Window x:Class="ApeDialogs.WpfDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ApeDialogs WPF Demo" Width="720" Height="640"
+        WindowStartupLocation="CenterScreen">
+
+    <ScrollViewer>
+        <WrapPanel Margin="16">
+            <Button x:Name="MessageButton" Content="Message" Width="150" Height="40" Margin="4" Click="MessageButton_Click" />
+            <Button x:Name="PromptButton" Content="Prompt" Width="150" Height="40" Margin="4" Click="PromptButton_Click" />
+            <Button x:Name="InputButton" Content="Input" Width="150" Height="40" Margin="4" Click="InputButton_Click" />
+            <Button x:Name="PasswordButton" Content="Password" Width="150" Height="40" Margin="4" Click="PasswordButton_Click" />
+            <Button x:Name="TextButton" Content="Text" Width="150" Height="40" Margin="4" Click="TextButton_Click" />
+            <Button x:Name="ToastButton" Content="Toast" Width="150" Height="40" Margin="4" Click="ToastButton_Click" />
+            <Button x:Name="SelectionButton" Content="Selection" Width="150" Height="40" Margin="4" Click="SelectionButton_Click" />
+            <Button x:Name="MultipleSelectionButton" Content="MultipleSelection" Width="150" Height="40" Margin="4" Click="MultipleSelectionButton_Click" />
+            <Button x:Name="ComboBoxInputButton" Content="ComboBoxInput" Width="150" Height="40" Margin="4" Click="ComboBoxInputButton_Click" />
+            <Button x:Name="DateTimeButton" Content="DateTime" Width="150" Height="40" Margin="4" Click="DateTimeButton_Click" />
+            <Button x:Name="NumberInputButton" Content="NumberInput" Width="150" Height="40" Margin="4" Click="NumberInputButton_Click" />
+            <Button x:Name="SliderButton" Content="Slider" Width="150" Height="40" Margin="4" Click="SliderButton_Click" />
+            <Button x:Name="RangeSliderButton" Content="RangeSlider" Width="150" Height="40" Margin="4" Click="RangeSliderButton_Click" />
+            <Button x:Name="ProgressButton" Content="Progress" Width="150" Height="40" Margin="4" Click="ProgressButton_Click" />
+            <Button x:Name="ColorButton" Content="Color" Width="150" Height="40" Margin="4" Click="ColorButton_Click" />
+            <Button x:Name="SheetButton" Content="DataEntrySheet" Width="150" Height="40" Margin="4" Click="SheetButton_Click" />
+            <Button x:Name="OpenFileButton" Content="OpenFile" Width="150" Height="40" Margin="4" Click="OpenFileButton_Click" />
+            <Button x:Name="OpenFolderButton" Content="OpenFolder" Width="150" Height="40" Margin="4" Click="OpenFolderButton_Click" />
+            <Button x:Name="SaveFileButton" Content="SaveFile" Width="150" Height="40" Margin="4" Click="SaveFileButton_Click" />
+        </WrapPanel>
+    </ScrollViewer>
+</Window>
