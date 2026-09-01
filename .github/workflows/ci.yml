@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore ApeFree.ApeDialogs.sln
+
+      # 解决方案含 WPF/WinForms 工程（Windows 专属），ubuntu 需交叉编译
+      - name: Build
+        run: dotnet build ApeFree.ApeDialogs.sln --configuration Release --no-restore -warnaserror -p:EnableWindowsTargeting=true
+
+      - name: Test
+        run: dotnet test ApeFree.ApeDialogs.sln --configuration Release --no-build
+
+  wpf-build:
+    # WPF 实现库仅支持 Windows（net461;net8.0-windows）
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore ApeFree.ApeDialogs.WPF/ApeFree.ApeDialogs.WPF.csproj
+
+      - name: Build
+        run: dotnet build ApeFree.ApeDialogs.WPF/ApeFree.ApeDialogs.WPF.csproj --configuration Release --no-restore -warnaserror
