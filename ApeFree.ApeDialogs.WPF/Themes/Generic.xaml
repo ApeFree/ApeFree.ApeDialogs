@@ -1,0 +1,850 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:ApeFree.ApeDialogs.WPF.Controls">
+
+    <!-- ============================================================ -->
+    <!-- 图标按钮（标题栏关闭按钮等）                                   -->
+    <!-- ============================================================ -->
+    <Style x:Key="ApeIconButtonStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bd" Background="{TemplateBinding Background}" CornerRadius="4">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillHover}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillPressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================ -->
+    <!-- ApeButton：主按钮（Fluent）                                   -->
+    <!-- ============================================================ -->
+    <Style TargetType="controls:ApeButton">
+        <Setter Property="Height" Value="32" />
+        <Setter Property="MinWidth" Value="96" />
+        <Setter Property="Padding" Value="16,0" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="Background" Value="{DynamicResource ApeControlFillDefault}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ApeStrokeDefault}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ApeButton">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource ApeControlCornerRadius}">
+                        <Grid>
+                            <Border x:Name="FocusRing"
+                                    CornerRadius="{DynamicResource ApeControlCornerRadius}"
+                                    BorderBrush="{DynamicResource ApeStrokeFocus}"
+                                    BorderThickness="1"
+                                    Margin="1"
+                                    Visibility="Collapsed" />
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillHover}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillPressed}" />
+                            <Setter Property="RenderTransform">
+                                <Setter.Value>
+                                    <ScaleTransform ScaleX="0.98" ScaleY="0.98" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="FocusRing" Property="Visibility" Value="Visible" />
+                        </Trigger>
+
+                        <!-- 强调色态 -->
+                        <DataTrigger Binding="{Binding IsAccent, RelativeSource={RelativeSource Self}}" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource ApeTextFillOnAccent}" />
+                            <Setter Property="Background" Value="{DynamicResource ApeAccentFillDefault}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ApeAccentFillDefault}" />
+                        </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsAccent, RelativeSource={RelativeSource Self}}" Value="True" />
+                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{DynamicResource ApeAccentFillSecondary}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ApeAccentFillSecondary}" />
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsAccent, RelativeSource={RelativeSource Self}}" Value="True" />
+                                <Condition Binding="{Binding IsPressed, RelativeSource={RelativeSource Self}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Background" Value="{DynamicResource ApeAccentFillTertiary}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ApeAccentFillTertiary}" />
+                        </MultiDataTrigger>
+
+                        <!-- 禁用态 -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource ApeTextFillDisabled}" />
+                            <Setter Property="Background" Value="{DynamicResource ApeControlFillDisabled}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ApeStrokeSubtle}" />
+                        </Trigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsAccent, RelativeSource={RelativeSource Self}}" Value="True" />
+                                <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{DynamicResource ApeTextFillOnAccentDisabled}" />
+                            <Setter Property="Background" Value="{DynamicResource ApeAccentFillDisabled}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource ApeAccentFillDisabled}" />
+                        </MultiDataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================ -->
+    <!-- ApeTextBox：文本框（占位符 + 悬停/焦点边框）                   -->
+    <!-- ============================================================ -->
+    <Style TargetType="controls:ApeTextBox">
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource ApeAccentFillSecondary}" />
+        <Setter Property="Background" Value="{DynamicResource ApeControlFillInputActive}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ApeStrokeDefault}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Padding" Value="10,0,10,0" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ApeTextBox">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource ApeControlCornerRadius}">
+                        <Grid>
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          Margin="{TemplateBinding Padding}" />
+                            <TextBlock x:Name="Placeholder"
+                                       Text="{TemplateBinding PlaceholderText}"
+                                       Foreground="{DynamicResource ApeTextFillTertiary}"
+                                       IsHitTestVisible="False"
+                                       Margin="{TemplateBinding Padding}"
+                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}" Value="">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ApeTextFillTertiary}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ApeStrokeControlActive}" />
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillDisabled}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ApeStrokeSubtle}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ApeTextFillDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================ -->
+    <!-- ApePasswordBox：密码框（包装控件，内部 PART_PasswordBox）    -->
+    <!-- ============================================================ -->
+    <Style TargetType="controls:ApePasswordBox">
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource ApeAccentFillSecondary}" />
+        <Setter Property="Background" Value="{DynamicResource ApeControlFillInputActive}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ApeStrokeDefault}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ApePasswordBox">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{DynamicResource ApeControlCornerRadius}">
+                        <Grid>
+                            <PasswordBox x:Name="PART_PasswordBox"
+                                         Foreground="{TemplateBinding Foreground}"
+                                         CaretBrush="{TemplateBinding CaretBrush}"
+                                         SelectionBrush="{TemplateBinding SelectionBrush}"
+                                         Background="Transparent"
+                                         BorderThickness="0"
+                                         FontSize="{TemplateBinding FontSize}"
+                                         Padding="{TemplateBinding Padding}"
+                                         VerticalContentAlignment="Center" />
+                            <TextBlock x:Name="Placeholder"
+                                       Text="{TemplateBinding PlaceholderText}"
+                                       Foreground="{DynamicResource ApeTextFillTertiary}"
+                                       IsHitTestVisible="False"
+                                       Margin="{TemplateBinding Padding}"
+                                       VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Password, RelativeSource={RelativeSource TemplatedParent}}" Value="">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ApeTextFillTertiary}" />
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ApeStrokeControlActive}" />
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillDisabled}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ApeStrokeSubtle}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ApeTextFillDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================ -->
+    <!-- ApeCheckBox：复选框                                          -->
+    <!-- ============================================================ -->
+    <Style TargetType="controls:ApeCheckBox">
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ApeCheckBox">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="Box"
+                                Width="20" Height="20"
+                                CornerRadius="4"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource ApeControlFillDefault}"
+                                BorderBrush="{DynamicResource ApeStrokeDefault}"
+                                BorderThickness="1">
+                            <Path x:Name="CheckMark"
+                                  Data="M 4.5,10 L 8.5,13.5 L 15.5,6"
+                                  Stroke="{DynamicResource ApeTextFillOnAccent}"
+                                  StrokeThickness="2"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  StrokeLineJoin="Round"
+                                  Visibility="Collapsed" />
+                        </Border>
+                        <ContentPresenter Grid.Column="1"
+                                          Margin="8,0,0,0"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          RecognizesAccessKey="True" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource ApeAccentFillDefault}" />
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource ApeAccentFillDefault}" />
+                            <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource ApeAccentFillSecondary}" />
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource ApeAccentFillSecondary}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource ApeAccentFillTertiary}" />
+                            <Setter TargetName="Box" Property="BorderBrush" Value="{DynamicResource ApeAccentFillTertiary}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource ApeControlFillHover}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Box" Property="Background" Value="{DynamicResource ApeControlFillPressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================ -->
+    <!-- ApeRadioButton：单选按钮                                     -->
+    <!-- ============================================================ -->
+    <Style TargetType="controls:ApeRadioButton">
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ApeRadioButton">
+                    <Grid Background="Transparent">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="Circle"
+                                Width="20" Height="20"
+                                CornerRadius="10"
+                                VerticalAlignment="Center"
+                                Background="{DynamicResource ApeControlFillDefault}"
+                                BorderBrush="{DynamicResource ApeStrokeDefault}"
+                                BorderThickness="1">
+                            <Ellipse x:Name="Dot"
+                                     Width="8" Height="8"
+                                     Fill="{DynamicResource ApeAccentFillDefault}"
+                                     Visibility="Collapsed" />
+                        </Border>
+                        <ContentPresenter Grid.Column="1"
+                                          Margin="8,0,0,0"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          RecognizesAccessKey="True" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="Circle" Property="BorderBrush" Value="{DynamicResource ApeAccentFillDefault}" />
+                            <Setter TargetName="Dot" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsMouseOver" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Circle" Property="BorderBrush" Value="{DynamicResource ApeAccentFillSecondary}" />
+                            <Setter TargetName="Dot" Property="Fill" Value="{DynamicResource ApeAccentFillSecondary}" />
+                        </MultiTrigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsChecked" Value="True" />
+                                <Condition Property="IsPressed" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Circle" Property="BorderBrush" Value="{DynamicResource ApeAccentFillTertiary}" />
+                            <Setter TargetName="Dot" Property="Fill" Value="{DynamicResource ApeAccentFillTertiary}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Circle" Property="Background" Value="{DynamicResource ApeControlFillHover}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Circle" Property="Background" Value="{DynamicResource ApeControlFillPressed}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.5" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================ -->
+    <!-- ApeComboBox：下拉框 + 下拉项样式                             -->
+    <!-- ============================================================ -->
+    <Style x:Key="ApeComboBoxItemStyle" TargetType="ComboBoxItem">
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Margin" Value="4,1" />
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="2">
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillHover}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="{DynamicResource ApeAccentTextPrimary}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource ApeTextFillDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- 可编辑下拉框的内部输入框样式 -->
+    <Style x:Key="ApeEditableComboTextBoxStyle" TargetType="TextBox">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="SelectionBrush" Value="{DynamicResource ApeAccentFillSecondary}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+    </Style>
+
+    <Style TargetType="controls:ApeComboBox">
+        <Setter Property="Height" Value="32" />
+        <Setter Property="MinWidth" Value="120" />
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="Background" Value="{DynamicResource ApeControlFillInputActive}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource ApeStrokeDefault}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource ApeComboBoxItemStyle}" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ApeComboBox">
+                    <Grid>
+                        <ToggleButton x:Name="ToggleButton"
+                                      ClickMode="Press"
+                                      Focusable="False"
+                                      IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                            <ToggleButton.Template>
+                                <ControlTemplate TargetType="ToggleButton">
+                                    <Border x:Name="Bd"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="{DynamicResource ApeControlCornerRadius}">
+                                        <ContentPresenter />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillHover}" />
+                                        </Trigger>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillPressed}" />
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ApeStrokeControlActive}" />
+                                        </Trigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillDisabled}" />
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ApeStrokeSubtle}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </ToggleButton.Template>
+                        </ToggleButton>
+
+                        <!-- 选中项展示（覆盖在触发器之上，绑定 ComboBox.SelectionBoxItem） -->
+                        <ContentPresenter x:Name="ContentSite"
+                                          IsHitTestVisible="False"
+                                          Margin="12,0,28,0"
+                                          VerticalAlignment="Center"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" />
+
+                        <!-- 可编辑模式输入框（IsEditable=true 时显示，由 ComboBox 内部接管） -->
+                        <TextBox x:Name="PART_EditableTextBox"
+                                 Style="{StaticResource ApeEditableComboTextBoxStyle}"
+                                 Margin="12,0,28,0"
+                                 VerticalAlignment="Center"
+                                 Visibility="Collapsed" />
+
+                        <!-- 下拉箭头 -->
+                        <Path x:Name="Arrow"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Center"
+                              Margin="0,0,12,0"
+                              Data="M 0,0 L 4,4 L 8,0"
+                              Stroke="{DynamicResource ApeTextFillSecondary}"
+                              StrokeThickness="1.5"
+                              StrokeStartLineCap="Round"
+                              StrokeEndLineCap="Round"
+                              IsHitTestVisible="False" />
+
+                        <Popup x:Name="PART_Popup"
+                               AllowsTransparency="True"
+                               PopupAnimation="Fade"
+                               StaysOpen="False"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               Placement="Bottom"
+                               VerticalOffset="4"
+                               MinWidth="{TemplateBinding ActualWidth}"
+                               MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                            <Border Background="{DynamicResource ApeLayerBackground}"
+                                    BorderBrush="{DynamicResource ApeStrokeDefault}"
+                                    BorderThickness="1"
+                                    CornerRadius="4"
+                                    Padding="0,4">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                              HorizontalScrollBarVisibility="Disabled">
+                                    <ItemsPresenter />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEditable" Value="True">
+                            <Setter TargetName="PART_EditableTextBox" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="ContentSite" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================ -->
+    <!-- ApeProgressBar：进度条（确定 / 不确定滑动动画）               -->
+    <!-- ============================================================ -->
+    <Style TargetType="controls:ApeProgressBar">
+        <Setter Property="Height" Value="4" />
+        <Setter Property="Minimum" Value="0" />
+        <Setter Property="Maximum" Value="100" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ApeProgressBar">
+                    <Grid>
+                        <Border CornerRadius="2" Background="{DynamicResource ApeControlFillTertiary}" />
+                        <Border x:Name="PART_Track" CornerRadius="2">
+                            <Grid x:Name="PART_Indicator"
+                                  HorizontalAlignment="Left"
+                                  Background="{DynamicResource ApeAccentFillDefault}">
+                                <Grid.RenderTransform>
+                                    <TranslateTransform />
+                                </Grid.RenderTransform>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsIndeterminate" Value="True">
+                            <Setter TargetName="PART_Indicator" Property="Width" Value="80" />
+                            <Trigger.EnterActions>
+                                <BeginStoryboard x:Name="IndeterminateStoryboard">
+                                    <Storyboard RepeatBehavior="Forever">
+                                        <DoubleAnimation Storyboard.TargetName="PART_Indicator"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                                                         From="-100" To="560"
+                                                         Duration="0:0:1.8"
+                                                         AutoReverse="False">
+                                            <DoubleAnimation.EasingFunction>
+                                                <CubicEase EasingMode="EaseInOut" />
+                                            </DoubleAnimation.EasingFunction>
+                                        </DoubleAnimation>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="IndeterminateStoryboard" />
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================ -->
+    <!-- ApeListView：列表 + 列表项样式                               -->
+    <!-- ============================================================ -->    <Style x:Key="ApeListViewItemStyle" TargetType="ListViewItem">
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Margin" Value="0,2" />
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="4">
+                        <ContentPresenter Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"
+                                          RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillHover}" />
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="True" />
+                                <Condition Property="Selector.IsSelectionActive" Value="True" />
+                            </MultiTrigger.Conditions>
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillHover}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ApeAccentTextPrimary}" />
+                        </MultiTrigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillHover}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ApeAccentTextPrimary}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Foreground" Value="{DynamicResource ApeTextFillDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:ApeListView">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource ApeListViewItemStyle}" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ApeListView">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4">
+                        <ScrollViewer Focusable="False"
+                                      Padding="{TemplateBinding Padding}"
+                                      HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                      VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================ -->
+    <!-- ApeSlider：滑块（轨道按钮 + 圆形滑块）                       -->
+    <!-- ============================================================ -->
+    <Style x:Key="ApeSliderTrackButtonStyle" TargetType="RepeatButton">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="RepeatButton">
+                    <Border Height="4"
+                            VerticalAlignment="Center"
+                            CornerRadius="2"
+                            Background="{TemplateBinding Background}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ApeSliderThumbStyle" TargetType="Thumb">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Thumb">
+                    <Grid Width="20" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Ellipse x:Name="OuterEllipse"
+                                 Width="18" Height="18"
+                                 Fill="{DynamicResource ApeAccentFillDefault}">
+                            <Ellipse.Effect>
+                                <DropShadowEffect BlurRadius="4" ShadowDepth="1" Direction="270" Opacity="0.25" Color="Black" />
+                            </Ellipse.Effect>
+                        </Ellipse>
+                        <Ellipse x:Name="InnerEllipse"
+                                 Width="8" Height="8"
+                                 Fill="{DynamicResource ApeWindowBackground}" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="OuterEllipse" Property="Fill" Value="{DynamicResource ApeAccentFillSecondary}" />
+                        </Trigger>
+                        <Trigger Property="IsDragging" Value="True">
+                            <Setter TargetName="OuterEllipse" Property="Fill" Value="{DynamicResource ApeAccentFillTertiary}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:ApeSlider">
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Minimum" Value="0" />
+        <Setter Property="Maximum" Value="100" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ApeSlider">
+                    <Grid>
+                        <Border Height="4"
+                                CornerRadius="2"
+                                Margin="10,0"
+                                Background="{DynamicResource ApeControlFillTertiary}"
+                                VerticalAlignment="Center" />
+                        <Track x:Name="PART_Track" VerticalAlignment="Center">
+                            <Track.DecreaseRepeatButton>
+                                <RepeatButton Command="{x:Static Slider.DecreaseLarge}"
+                                              Style="{StaticResource ApeSliderTrackButtonStyle}"
+                                              Background="{DynamicResource ApeAccentFillDefault}" />
+                            </Track.DecreaseRepeatButton>
+                            <Track.IncreaseRepeatButton>
+                                <RepeatButton Command="{x:Static Slider.IncreaseLarge}"
+                                              Style="{StaticResource ApeSliderTrackButtonStyle}"
+                                              Background="Transparent" />
+                            </Track.IncreaseRepeatButton>
+                            <Track.Thumb>
+                                <Thumb x:Name="Thumb" Style="{StaticResource ApeSliderThumbStyle}" VerticalAlignment="Center" />
+                            </Track.Thumb>
+                        </Track>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ============================================================ -->
+    <!-- ApeNumericUpDown：数值输入（文本框 + 上下步进按钮）           -->
+    <!-- ============================================================ -->
+    <Style TargetType="controls:ApeNumericUpDown">
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Foreground" Value="{DynamicResource ApeTextFillPrimary}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ApeNumericUpDown">
+                    <Border x:Name="Bd"
+                            Background="{DynamicResource ApeControlFillInputActive}"
+                            BorderBrush="{DynamicResource ApeStrokeDefault}"
+                            BorderThickness="1"
+                            CornerRadius="{DynamicResource ApeControlCornerRadius}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox x:Name="PART_TextBox"
+                                     Grid.Column="0"
+                                     Margin="12,0"
+                                     VerticalContentAlignment="Center"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Foreground="{TemplateBinding Foreground}"
+                                     FontSize="{TemplateBinding FontSize}"
+                                     FocusVisualStyle="{x:Null}" />
+
+                            <Button x:Name="PART_UpButton"
+                                    Grid.Column="1"
+                                    Width="28" Height="24"
+                                    Margin="0,1,0,1"
+                                    Padding="0"
+                                    Focusable="False"
+                                    Style="{StaticResource ApeIconButtonStyle}">
+                                <Path Data="M 2,5 L 5,2 L 8,5"
+                                      Stroke="{DynamicResource ApeTextFillSecondary}"
+                                      StrokeThickness="1.5"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round" />
+                            </Button>
+
+                            <Button x:Name="PART_DownButton"
+                                    Grid.Column="2"
+                                    Width="28" Height="24"
+                                    Margin="0,1,2,1"
+                                    Padding="0"
+                                    Focusable="False"
+                                    Style="{StaticResource ApeIconButtonStyle}">
+                                <Path Data="M 2,2 L 5,5 L 8,2"
+                                      Stroke="{DynamicResource ApeTextFillSecondary}"
+                                      StrokeThickness="1.5"
+                                      StrokeStartLineCap="Round"
+                                      StrokeEndLineCap="Round" />
+                            </Button>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ApeStrokeControlActive}" />
+                            <Setter TargetName="Bd" Property="BorderThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ApeControlFillDisabled}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource ApeStrokeSubtle}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ApeTextFillDisabled}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>
