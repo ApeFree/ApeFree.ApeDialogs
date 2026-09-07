@@ -1,4 +1,4 @@
-﻿# ApeFree.ApeDialogs
+# ApeFree.ApeDialogs
 
 [![NuGet](https://img.shields.io/nuget/v/ApeFree.ApeDialogs.svg?style=flat-square)](https://www.nuget.org/packages/ApeFree.ApeDialogs)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -32,7 +32,7 @@ dotnet add package ApeFree.ApeDialogs
 或在项目文件（`.csproj`）中添加引用：
 
 ```xml
-<PackageReference Include="ApeFree.ApeDialogs" Version="1.0.0.0-beta260901" />
+<PackageReference Include="ApeFree.ApeDialogs" Version="1.0.2.1-alpha260907" />
 ```
 
 ---
