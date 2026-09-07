@@ -11,7 +11,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
+        public DialogOption ConfirmOption { get; set; } = new("Confirm", DialogOptionTag.Positive);
 
         /// <inheritdoc/>
         public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption };

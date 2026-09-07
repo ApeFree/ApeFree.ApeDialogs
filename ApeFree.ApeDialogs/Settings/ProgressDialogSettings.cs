@@ -11,22 +11,22 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 是否是不确定进度（转圈动画）。
         /// </summary>
-        public bool IsIndeterminate { get; init; }
+        public bool IsIndeterminate { get; set; }
 
         /// <summary>
         /// 初始进度值（范围 0.0 ~ 1.0）。
         /// </summary>
-        public double InitialProgress { get; init; }
+        public double InitialProgress { get; set; }
 
         /// <summary>
         /// 初始进度消息。
         /// </summary>
-        public string? InitialMessage { get; init; }
+        public string? InitialMessage { get; set; }
 
         /// <summary>
         /// 取消选项（仅 <see cref="DialogSettings.Cancelable"/> 为 true 时展示）。
         /// </summary>
-        public DialogOption CancelOption { get; init; } = DialogOption.CreateCancelOption();
+        public DialogOption CancelOption { get; set; } = DialogOption.CreateCancelOption();
 
         /// <inheritdoc/>
         public override IReadOnlyList<DialogOption> DefaultOptions => new[] { CancelOption };

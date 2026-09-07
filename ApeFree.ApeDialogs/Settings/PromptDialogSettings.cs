@@ -11,12 +11,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 积极选项（Yes）。
         /// </summary>
-        public DialogOption PositiveOption { get; init; } = new("Yes", DialogOptionTag.Positive);
+        public DialogOption PositiveOption { get; set; } = new("Yes", DialogOptionTag.Positive);
 
         /// <summary>
         /// 消极选项（No）。
         /// </summary>
-        public DialogOption NegativeOption { get; init; } = new("No", DialogOptionTag.Negative);
+        public DialogOption NegativeOption { get; set; } = new("No", DialogOptionTag.Negative);
 
         /// <inheritdoc/>
         public override IReadOnlyList<DialogOption> DefaultOptions => new[] { PositiveOption, NegativeOption };

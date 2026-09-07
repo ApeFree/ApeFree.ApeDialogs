@@ -13,37 +13,37 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 最小值。
         /// </summary>
-        public decimal Minimum { get; init; } = 0m;
+        public decimal Minimum { get; set; } = 0m;
 
         /// <summary>
         /// 最大值。
         /// </summary>
-        public decimal Maximum { get; init; } = 100m;
+        public decimal Maximum { get; set; } = 100m;
 
         /// <summary>
         /// 默认值。
         /// </summary>
-        public decimal DefaultValue { get; init; } = 50m;
+        public decimal DefaultValue { get; set; } = 50m;
 
         /// <summary>
         /// 刻度步长。
         /// </summary>
-        public decimal TickFrequency { get; init; } = 1m;
+        public decimal TickFrequency { get; set; } = 1m;
 
         /// <summary>
         /// 是否显示当前值标签。
         /// </summary>
-        public bool ShowValueLabel { get; init; } = true;
+        public bool ShowValueLabel { get; set; } = true;
 
         /// <summary>
         /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
+        public DialogOption ConfirmOption { get; set; } = new("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
         /// 取消选项。
         /// </summary>
-        public DialogOption CancelOption { get; init; } = DialogOption.CreateCancelOption();
+        public DialogOption CancelOption { get; set; } = DialogOption.CreateCancelOption();
 
         /// <inheritdoc/>
         public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption, CancelOption };

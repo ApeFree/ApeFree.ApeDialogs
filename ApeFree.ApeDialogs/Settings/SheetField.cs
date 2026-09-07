@@ -35,7 +35,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 标题。
         /// </summary>
-        public string Title { get; init; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// 获取原始值。
@@ -69,7 +69,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 数据有效性检查过程。
         /// </summary>
-        public Func<T?, ValidationResult>? Validator { get; init; }
+        public Func<T?, ValidationResult>? Validator { get; set; }
 
         /// <inheritdoc/>
         public override object? GetRawValue() => _value;
@@ -92,12 +92,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 最大长度（UI 约束提示）。
         /// </summary>
-        public int MaximumLength { get; init; } = int.MaxValue;
+        public int MaximumLength { get; set; } = int.MaxValue;
 
         /// <summary>
         /// 是否多行。
         /// </summary>
-        public bool IsMultiline { get; init; }
+        public bool IsMultiline { get; set; }
     }
 
     /// <summary>
@@ -111,12 +111,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 最大长度（UI 约束提示）。
         /// </summary>
-        public int MaximumLength { get; init; } = 128;
+        public int MaximumLength { get; set; } = 128;
 
         /// <summary>
         /// 密码遮掩字符。
         /// </summary>
-        public char PasswordChar { get; init; } = '●';
+        public char PasswordChar { get; set; } = '●';
     }
 
     /// <summary>
@@ -130,22 +130,22 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 是否允许为空。
         /// </summary>
-        public bool AllowEmpty { get; init; }
+        public bool AllowEmpty { get; set; }
 
         /// <summary>
         /// 最大长度（UI 约束提示）。
         /// </summary>
-        public int MaximumLength { get; init; } = int.MaxValue;
+        public int MaximumLength { get; set; } = int.MaxValue;
 
         /// <summary>
         /// 最小长度（UI 约束提示）。
         /// </summary>
-        public int MinimumLength { get; init; }
+        public int MinimumLength { get; set; }
 
         /// <summary>
         /// 是否多行。
         /// </summary>
-        public bool IsMultiline { get; init; } = true;
+        public bool IsMultiline { get; set; } = true;
     }
 
     /// <summary>
@@ -159,7 +159,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 浏览按钮文本。
         /// </summary>
-        public string BrowseButtonText { get; init; } = "Browse...";
+        public string BrowseButtonText { get; set; } = "Browse...";
     }
 
     /// <summary>
@@ -182,17 +182,17 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 保留小数的位数（UI 约束提示）。
         /// </summary>
-        public int DecimalPlaces { get; init; } = 1;
+        public int DecimalPlaces { get; set; } = 1;
 
         /// <summary>
         /// 最大值。
         /// </summary>
-        public decimal Maximum { get; init; } = 1000000;
+        public decimal Maximum { get; set; } = 1000000;
 
         /// <summary>
         /// 最小值。
         /// </summary>
-        public decimal Minimum { get; init; } = -1000000;
+        public decimal Minimum { get; set; } = -1000000;
     }
 
     /// <summary>
@@ -206,12 +206,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 可选项集合。
         /// </summary>
-        public IReadOnlyList<object?> Items { get; init; } = new object?[0];
+        public IReadOnlyList<object?> Items { get; set; } = new object?[0];
 
         /// <summary>
         /// 选项显示文本转换器。
         /// </summary>
-        public Func<object?, string> ItemDisplayConverter { get; init; } = item => item?.ToString() ?? string.Empty;
+        public Func<object?, string> ItemDisplayConverter { get; set; } = item => item?.ToString() ?? string.Empty;
     }
 
     /// <summary>
@@ -234,12 +234,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 可选项集合。
         /// </summary>
-        public IReadOnlyList<object?> Items { get; init; } = new object?[0];
+        public IReadOnlyList<object?> Items { get; set; } = new object?[0];
 
         /// <summary>
         /// 选项显示文本转换器。
         /// </summary>
-        public Func<object?, string> ItemDisplayConverter { get; init; } = item => item?.ToString() ?? string.Empty;
+        public Func<object?, string> ItemDisplayConverter { get; set; } = item => item?.ToString() ?? string.Empty;
     }
 
     /// <summary>
@@ -253,6 +253,6 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 日期时间格式（24 小时制）。
         /// </summary>
-        public string DateTimeFormat { get; init; } = "yyyy-MM-dd HH:mm:ss";
+        public string DateTimeFormat { get; set; } = "yyyy-MM-dd HH:mm:ss";
     }
 }

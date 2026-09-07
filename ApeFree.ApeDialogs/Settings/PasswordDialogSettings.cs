@@ -8,6 +8,6 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 密码遮掩字符。
         /// </summary>
-        public char PasswordChar { get; init; } = '●';
+        public char PasswordChar { get; set; } = '●';
     }
 }

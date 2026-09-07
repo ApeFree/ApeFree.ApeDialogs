@@ -12,27 +12,27 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 正文文本（长文本，滚动显示）。
         /// </summary>
-        public string Text { get; init; } = string.Empty;
+        public string Text { get; set; } = string.Empty;
 
         /// <summary>
         /// 是否只读。
         /// </summary>
-        public bool IsReadOnly { get; init; } = true;
+        public bool IsReadOnly { get; set; } = true;
 
         /// <summary>
         /// 是否自动换行。
         /// </summary>
-        public bool WordWrap { get; init; } = true;
+        public bool WordWrap { get; set; } = true;
 
         /// <summary>
         /// 是否允许选择/复制文本。
         /// </summary>
-        public bool IsSelectable { get; init; } = true;
+        public bool IsSelectable { get; set; } = true;
 
         /// <summary>
         /// 关闭选项。
         /// </summary>
-        public DialogOption CloseOption { get; init; } = new("Close", DialogOptionTag.Neutral);
+        public DialogOption CloseOption { get; set; } = new("Close", DialogOptionTag.Neutral);
 
         /// <inheritdoc/>
         public override IReadOnlyList<DialogOption> DefaultOptions => new[] { CloseOption };

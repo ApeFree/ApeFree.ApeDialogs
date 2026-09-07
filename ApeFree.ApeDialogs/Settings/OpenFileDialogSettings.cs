@@ -11,27 +11,27 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
+        public DialogOption ConfirmOption { get; set; } = new("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
         /// 取消选项。
         /// </summary>
-        public DialogOption CancelOption { get; init; } = DialogOption.CreateCancelOption();
+        public DialogOption CancelOption { get; set; } = DialogOption.CreateCancelOption();
 
         /// <summary>
         /// 初始目录；为空时由实现方决定（如上次目录或默认目录）。
         /// </summary>
-        public string? InitialPath { get; init; }
+        public string? InitialPath { get; set; }
 
         /// <summary>
         /// 搜索通配符。
         /// </summary>
-        public string SearchPattern { get; init; } = "*";
+        public string SearchPattern { get; set; } = "*";
 
         /// <summary>
         /// 是否支持多选。
         /// </summary>
-        public bool MultiSelect { get; init; }
+        public bool MultiSelect { get; set; }
 
         /// <inheritdoc/>
         public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption, CancelOption };
@@ -45,22 +45,22 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
+        public DialogOption ConfirmOption { get; set; } = new("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
         /// 取消选项。
         /// </summary>
-        public DialogOption CancelOption { get; init; } = DialogOption.CreateCancelOption();
+        public DialogOption CancelOption { get; set; } = DialogOption.CreateCancelOption();
 
         /// <summary>
         /// 初始目录；为空时由实现方决定（如上次目录或默认目录）。
         /// </summary>
-        public string? InitialPath { get; init; }
+        public string? InitialPath { get; set; }
 
         /// <summary>
         /// 是否支持多选。
         /// </summary>
-        public bool MultiSelect { get; init; }
+        public bool MultiSelect { get; set; }
 
         /// <inheritdoc/>
         public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption, CancelOption };

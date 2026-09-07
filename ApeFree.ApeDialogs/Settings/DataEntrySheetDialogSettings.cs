@@ -11,12 +11,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
+        public DialogOption ConfirmOption { get; set; } = new("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
         /// 取消选项。
         /// </summary>
-        public DialogOption CancelOption { get; init; } = DialogOption.CreateCancelOption();
+        public DialogOption CancelOption { get; set; } = DialogOption.CreateCancelOption();
 
         /// <inheritdoc/>
         public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption, CancelOption };

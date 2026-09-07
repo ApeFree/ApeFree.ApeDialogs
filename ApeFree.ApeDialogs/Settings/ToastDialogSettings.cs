@@ -18,7 +18,7 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 是否响应点击（点击后立即以确认结果关闭）。
         /// </summary>
-        public bool IsClickable { get; init; } = true;
+        public bool IsClickable { get; set; } = true;
 
         /// <inheritdoc/>
         public override IReadOnlyList<DialogOption> DefaultOptions => new DialogOption[0];

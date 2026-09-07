@@ -33,6 +33,11 @@ namespace ApeFree.ApeDialogs.Core
         /// 是否正在显示。
         /// </summary>
         bool IsShown { get; }
+
+        /// <summary>
+        /// 取消/关闭对话框。
+        /// </summary>
+        void Cancel();
     }
 
     /// <summary>

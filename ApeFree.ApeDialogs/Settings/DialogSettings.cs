@@ -13,47 +13,52 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 标题。
         /// </summary>
-        public string Title { get; init; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
 
         /// <summary>
         /// 提示语内容。
         /// </summary>
-        public string? Content { get; init; }
+        public string? Content { get; set; }
 
         /// <summary>
         /// 是否允许取消（如是否显示关闭按钮、Esc 是否生效）。
         /// </summary>
-        public bool Cancelable { get; init; } = true;
+        public bool Cancelable { get; set; } = true;
 
         /// <summary>
         /// 配色主题；为空时使用 <see cref="DefaultTheme"/>。
         /// </summary>
-        public IDialogTheme? Theme { get; init; }
+        public IDialogTheme? Theme { get; set; }
+
+        /// <summary>
+        /// 对话框提示色/强调色；为空时使用主题自带的默认提示色。
+        /// </summary>
+        public ApeColor? ReminderColor { get; set; }
 
         /// <summary>
         /// 建议尺寸；为空时由实现方决定默认尺寸。
         /// </summary>
-        public ApeSize? DialogSize { get; init; }
+        public ApeSize? DialogSize { get; set; }
 
         /// <summary>
         /// 默认字体；为空时由实现方决定默认字体。
         /// </summary>
-        public DialogFont? Font { get; init; }
+        public DialogFont? Font { get; set; }
 
         /// <summary>
         /// 自动关闭时长；设置后对话框在显示满该时长时以取消结果自动关闭。
         /// </summary>
-        public TimeSpan? Duration { get; init; }
+        public TimeSpan? Duration { get; set; }
 
         /// <summary>
         /// 显示完成后的回调。
         /// </summary>
-        public Action<IDialog>? OnShown { get; init; }
+        public Action<IDialog>? OnShown { get; set; }
 
         /// <summary>
         /// 销毁完成后的回调。
         /// </summary>
-        public Action<IDialog>? OnDismissed { get; init; }
+        public Action<IDialog>? OnDismissed { get; set; }
 
         /// <summary>
         /// 默认选项集合。
@@ -70,12 +75,12 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 结果校验规则；提交结果时执行，失败则关闭前拦截并回调实现方。
         /// </summary>
-        public Func<TResult, ValidationResult>? Validator { get; init; }
+        public Func<TResult, ValidationResult>? Validator { get; set; }
 
         /// <summary>
         /// 值实时变化回调（调节类 Dialog，如滑块）。
         /// 仅用于观察/实时影响外界；取消 Dialog 并不会回滚已推送的值。
         /// </summary>
-        public Action<TResult>? OnValueChanged { get; init; }
+        public Action<TResult>? OnValueChanged { get; set; }
     }
 }

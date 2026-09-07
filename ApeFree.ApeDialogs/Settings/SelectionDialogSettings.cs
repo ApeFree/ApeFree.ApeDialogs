@@ -13,17 +13,17 @@ namespace ApeFree.ApeDialogs.Settings
         /// <summary>
         /// 确认选项。
         /// </summary>
-        public DialogOption ConfirmOption { get; init; } = new("Confirm", DialogOptionTag.Positive);
+        public DialogOption ConfirmOption { get; set; } = new("Confirm", DialogOptionTag.Positive);
 
         /// <summary>
         /// 取消选项。
         /// </summary>
-        public DialogOption CancelOption { get; init; } = DialogOption.CreateCancelOption();
+        public DialogOption CancelOption { get; set; } = DialogOption.CreateCancelOption();
 
         /// <summary>
         /// 选项显示文本转换器。
         /// </summary>
-        public Func<T, string> ItemDisplayConverter { get; init; } = item => item?.ToString() ?? string.Empty;
+        public Func<T, string> ItemDisplayConverter { get; set; } = item => item?.ToString() ?? string.Empty;
 
         /// <inheritdoc/>
         public override IReadOnlyList<DialogOption> DefaultOptions => new[] { ConfirmOption, CancelOption };
