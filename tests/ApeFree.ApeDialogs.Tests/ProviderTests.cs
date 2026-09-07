@@ -92,5 +92,59 @@ namespace ApeFree.ApeDialogs.Tests
         {
             Assert.NotNull(_provider.Theme);
         }
+
+        [Fact]
+        public void CreatePromptDialog_WithLambdaConfigure_SetsPropertiesCorrectly()
+        {
+            var dialog = _provider.CreatePromptDialog(s =>
+            {
+                s.Title = "测试标题";
+                s.Content = "测试内容";
+            });
+
+            Assert.NotNull(dialog);
+            Assert.IsType<TestDialog<bool>>(dialog);
+            var testDialog = (TestDialog<bool>)dialog;
+            Assert.Equal("测试标题", testDialog.Settings.Title);
+            Assert.Equal("测试内容", testDialog.Settings.Content);
+        }
+
+        [Fact]
+        public async Task ShowPromptDialogAsync_WithLambdaConfigure_ExecutesCorrectly()
+        {
+            var task = _provider.ShowPromptDialogAsync(s =>
+            {
+                s.Title = "确认删除";
+                s.Content = "确定要删除吗？";
+            });
+
+            var dialog = _provider.LastCreatedDialog<bool>();
+            Assert.Equal("确认删除", dialog.Settings.Title);
+            Assert.Equal("确定要删除吗？", dialog.Settings.Content);
+
+            dialog.SimulateSubmit(true);
+            var result = await task;
+
+            Assert.False(result.IsCanceled);
+            Assert.True(result.Value);
+        }
+
+        [Fact]
+        public void CreateInputDialog_WithLambdaConfigure_SetsPropertiesCorrectly()
+        {
+            var dialog = _provider.CreateInputDialog(s =>
+            {
+                s.Title = "请输入名称";
+                s.DefaultText = "默认值";
+                s.IsMultiline = true;
+            });
+
+            Assert.NotNull(dialog);
+            var testDialog = (TestDialog<string>)dialog;
+            Assert.Equal("请输入名称", testDialog.Settings.Title);
+            var inputSettings = Assert.IsType<InputDialogSettings>(testDialog.Settings);
+            Assert.Equal("默认值", inputSettings.DefaultText);
+            Assert.True(inputSettings.IsMultiline);
+        }
     }
 }

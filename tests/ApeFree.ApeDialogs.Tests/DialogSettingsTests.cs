@@ -27,10 +27,13 @@ namespace ApeFree.ApeDialogs.Tests
         }
 
         [Fact]
-        public void InputDialog_CancelOption_IsCancelBehavior()
+        public void InputDialog_CancelOption_CancelsDialog()
         {
             var settings = new InputDialogSettings();
-            Assert.Equal(DialogOptionBehavior.Cancel, settings.CancelOption.Behavior);
+            Assert.NotNull(settings.CancelOption.Action);
+            var dialog = new TestDialog<string>(settings);
+            settings.CancelOption.Action(dialog);
+            Assert.True(dialog.DismissHandlerCalled);
         }
 
         [Fact]
@@ -67,7 +70,7 @@ namespace ApeFree.ApeDialogs.Tests
         public void CancelOption_Factory()
         {
             var option = DialogOption.CreateCancelOption("Cancel");
-            Assert.Equal(DialogOptionBehavior.Cancel, option.Behavior);
+            Assert.NotNull(option.Action);
             Assert.Equal(DialogOptionTag.Negative, option.Tag);
             Assert.True(option.IsEnabled);
         }

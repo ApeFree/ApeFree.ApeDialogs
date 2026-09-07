@@ -148,5 +148,33 @@ namespace ApeFree.ApeDialogs.Tests
             var field = new NumberField { Title = "N", Value = 3.14m };
             Assert.Equal(3.14m, field.Value);
         }
+
+        [Fact]
+        public void AddXxxField_FluentChaining_AllTypesSupported()
+        {
+            var sheet = new DataEntrySheet()
+                .AddTextField("Name", "ZhangSan")
+                .AddPasswordField(p => { p.Title = "Password"; p.Value = "123456"; })
+                .AddNumberField("Age", 18, minimum: 0, maximum: 120, decimalPlaces: 0)
+                .AddDateTimeField("Birthday", new DateTime(2000, 1, 1))
+                .AddFilePathField("Doc", browseButtonText: "Select Doc...")
+                .AddPicturePathField(p => { p.Title = "Photo"; p.BrowseButtonText = "Select Photo..."; })
+                .AddHexBytesField("Bytes", new byte[] { 0x01, 0x02 })
+                .AddComboBoxField("City", new[] { "Beijing", "Shanghai" }, "Beijing")
+                .AddSingleChoiceField("Gender", new[] { "Male", "Female" }, "Male")
+                .AddMultipleChoiceField("Tags", new[] { "A", "B", "C" }, new[] { "A", "B" });
+
+            Assert.Equal(10, sheet.Fields.Count);
+            Assert.IsType<TextField>(sheet["Name"]);
+            Assert.IsType<PasswordField>(sheet["Password"]);
+            Assert.IsType<NumberField>(sheet["Age"]);
+            Assert.IsType<DateTimeField>(sheet["Birthday"]);
+            Assert.IsType<FilePathField>(sheet["Doc"]);
+            Assert.IsType<PicturePathField>(sheet["Photo"]);
+            Assert.IsType<HexBytesField>(sheet["Bytes"]);
+            Assert.IsType<ComboBoxField>(sheet["City"]);
+            Assert.IsType<SingleChoiceField>(sheet["Gender"]);
+            Assert.IsType<MultipleChoiceField>(sheet["Tags"]);
+        }
     }
 }

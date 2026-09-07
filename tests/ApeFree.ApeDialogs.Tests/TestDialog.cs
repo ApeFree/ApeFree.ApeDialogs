@@ -16,6 +16,8 @@ namespace ApeFree.ApeDialogs.Tests
         public bool DismissHandlerCalled { get; private set; }
         public ValidationResult? LastValidationFailure { get; private set; }
 
+        public new DialogSettings<TResult> Settings => base.Settings;
+
         public TestDialog(DialogSettings<TResult> settings) : base(settings)
         {
             AddDefaultOptions();
