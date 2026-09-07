@@ -57,18 +57,16 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
             {
                 button.Click += (_, _) => TrySubmit(_passwordBox.Password);
             }
+            else if (ReferenceEquals(dialogOption, _settings.ClearOption))
+            {
+                button.Click += (_, _) => _passwordBox.Password = string.Empty;
+            }
 
             return button;
         }
 
         /// <inheritdoc/>
         protected override void OnConfirmRequested() => TrySubmit(_passwordBox.Password);
-
-        /// <inheritdoc/>
-        protected override void OnClearRequested()
-        {
-            _passwordBox.Password = string.Empty;
-        }
 
         /// <inheritdoc/>
         protected override void OnValidationFailed(ApeFree.ApeDialogs.Core.ValidationResult result)

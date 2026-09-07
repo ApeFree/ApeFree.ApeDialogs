@@ -100,6 +100,14 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
             {
                 button.Click += (_, _) => TrySubmit(GetSelectedItems());
             }
+            else if (ReferenceEquals(dialogOption, _settings.SelectAllOption))
+            {
+                button.Click += (_, _) => SelectAll();
+            }
+            else if (ReferenceEquals(dialogOption, _settings.ReverseSelectedOption))
+            {
+                button.Click += (_, _) => ReverseSelection();
+            }
 
             return button;
         }
@@ -107,8 +115,7 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
         /// <inheritdoc/>
         protected override void OnConfirmRequested() => TrySubmit(GetSelectedItems());
 
-        /// <inheritdoc/>
-        protected override void OnSelectAllRequested()
+        private void SelectAll()
         {
             foreach (var item in _items)
             {
@@ -119,8 +126,7 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
             }
         }
 
-        /// <inheritdoc/>
-        protected override void OnReverseSelectionRequested()
+        private void ReverseSelection()
         {
             var selected = _listView.SelectedItems.Cast<SelectionItem>().ToList();
             foreach (var item in selected)

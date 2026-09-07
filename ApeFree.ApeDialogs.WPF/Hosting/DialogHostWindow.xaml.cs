@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using ApeFree.ApeDialogs.Theme;
 using ApeFree.ApeDialogs.WPF.Theme;
 
 namespace ApeFree.ApeDialogs.WPF.Hosting
@@ -55,6 +56,14 @@ namespace ApeFree.ApeDialogs.WPF.Hosting
 
             Loaded += OnLoaded;
             PreviewKeyDown += OnPreviewKeyDown;
+        }
+
+        /// <summary>
+        /// 设置提示色/强调边框色。
+        /// </summary>
+        public void SetReminderColor(ApeColor color)
+        {
+            RootBorder.BorderBrush = new SolidColorBrush(Color.FromArgb(color.A, color.R, color.G, color.B));
         }
 
         /// <summary>

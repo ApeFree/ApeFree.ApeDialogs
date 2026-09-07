@@ -65,6 +65,10 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
             {
                 button.Click += (_, _) => TrySubmit(_textBox.Text);
             }
+            else if (ReferenceEquals(dialogOption, _settings.ClearOption))
+            {
+                button.Click += (_, _) => _textBox.Clear();
+            }
 
             return button;
         }
@@ -77,12 +81,6 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
             {
                 TrySubmit(_textBox.Text);
             }
-        }
-
-        /// <inheritdoc/>
-        protected override void OnClearRequested()
-        {
-            _textBox.Clear();
         }
 
         /// <inheritdoc/>

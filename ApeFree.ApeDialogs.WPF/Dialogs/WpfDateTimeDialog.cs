@@ -141,6 +141,10 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
             {
                 button.Click += (_, _) => TrySubmit(GetSelectedDateTime());
             }
+            else if (ReferenceEquals(dialogOption, _settings.CurrentTimeOption))
+            {
+                button.Click += (_, _) => SetCurrentTimeToNow();
+            }
 
             return button;
         }
@@ -148,8 +152,7 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
         /// <inheritdoc/>
         protected override void OnConfirmRequested() => TrySubmit(GetSelectedDateTime());
 
-        /// <inheritdoc/>
-        protected override void OnSetCurrentTimeRequested()
+        private void SetCurrentTimeToNow()
         {
             var now = DateTime.Now;
             _calendar.SelectedDate = now.Date;

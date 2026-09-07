@@ -39,6 +39,11 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
             Host.Loaded += (_, _) => RaiseShown();
             Host.Closed += (_, _) => Cancel();
 
+            if (settings.ReminderColor.HasValue)
+            {
+                Host.SetReminderColor(settings.ReminderColor.Value);
+            }
+
             _contentTextBlock = new TextBlock
             {
                 Text = settings.Content ?? string.Empty,
@@ -80,34 +85,6 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
         {
         }
 
-        /// <summary>
-        /// 清空动作（默认无操作，由输入类 Dialog 覆写）。
-        /// </summary>
-        protected virtual void OnClearRequested()
-        {
-        }
-
-        /// <summary>
-        /// 全选动作（默认无操作，由多选类 Dialog 覆写）。
-        /// </summary>
-        protected virtual void OnSelectAllRequested()
-        {
-        }
-
-        /// <summary>
-        /// 反选动作（默认无操作，由多选类 Dialog 覆写）。
-        /// </summary>
-        protected virtual void OnReverseSelectionRequested()
-        {
-        }
-
-        /// <summary>
-        /// 设为当前时间动作（默认无操作，由日期时间 Dialog 覆写）。
-        /// </summary>
-        protected virtual void OnSetCurrentTimeRequested()
-        {
-        }
-
         /// <inheritdoc/>
         public override ApeButton AddOption(DialogOption dialogOption)
         {
@@ -125,32 +102,8 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
 
             button.Click += (_, _) =>
             {
-                switch (dialogOption.Behavior)
-                {
-                    case DialogOptionBehavior.Cancel:
-                        Cancel();
-                        break;
-
-                    case DialogOptionBehavior.Clear:
-                        OnClearRequested();
-                        break;
-
-                    case DialogOptionBehavior.SelectAll:
-                        OnSelectAllRequested();
-                        break;
-
-                    case DialogOptionBehavior.ReverseSelection:
-                        OnReverseSelectionRequested();
-                        break;
-
-                    case DialogOptionBehavior.SetCurrentTime:
-                        OnSetCurrentTimeRequested();
-                        break;
-
-                    default:
-                        dialogOption.OnSelected?.Invoke(this, new OptionSelectedEventArgs(this, dialogOption));
-                        break;
-                }
+                dialogOption.Action?.Invoke(this);
+                dialogOption.OnSelected?.Invoke(this, new OptionSelectedEventArgs(this, dialogOption));
             };
 
             Host.AddOptionButton(button);
