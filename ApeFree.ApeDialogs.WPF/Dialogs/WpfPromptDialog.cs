@@ -19,9 +19,14 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
         {
             _settings = settings;
 
-            var panel = new StackPanel();
-            panel.Children.Add(ContentTextBlock);
-            Host.SetDialogContent(panel);
+            var scroll = new ScrollViewer
+            {
+                Content = ContentTextBlock,
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+                Focusable = false,
+            };
+            Host.SetDialogContent(scroll);
 
             AddDefaultOptions();
         }

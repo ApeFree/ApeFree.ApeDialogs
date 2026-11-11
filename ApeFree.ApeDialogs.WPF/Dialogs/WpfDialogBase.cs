@@ -19,8 +19,13 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
     /// <typeparam name="TResult">结果数据类型</typeparam>
     public abstract class WpfDialogBase<TResult> : BaseDialog<DialogHostWindow, ApeButton, IWin32Owner, TResult>
     {
+        private static readonly System.Collections.Generic.List<DialogHostWindow> ActiveDialogs = new();
+        private static readonly object ActiveLock = new();
+
         private readonly IDialogTheme _theme;
         private readonly TextBlock _contentTextBlock;
+        private int _ownerDisabledState;
+        private IWin32Owner? _effectiveOwner;
 
         /// <summary>
         /// 构造 WPF Dialog。
@@ -34,6 +39,7 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
             View = Host;
             Host.Title = settings.Title;
             Host.ShowCloseButton = settings.Cancelable;
+            Host.Cancelable = settings.Cancelable;
             Host.CloseRequested += (_, _) => Cancel();
             Host.ConfirmRequested += (_, _) => OnConfirmRequested();
             Host.Loaded += (_, _) => RaiseShown();
@@ -44,11 +50,39 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
                 Host.SetReminderColor(settings.ReminderColor.Value);
             }
 
+            if (settings.DialogSize is ApeSize size && size.Width > 0 && size.Height > 0)
+            {
+                Host.Width = size.Width;
+                Host.Height = size.Height;
+            }
+
+            double contentFontSize = 14;
+            if (settings.Font is DialogFont font)
+            {
+                if (!string.IsNullOrWhiteSpace(font.Family))
+                {
+                    Host.FontFamily = new FontFamily(font.Family);
+                }
+                if (font.Size > 0)
+                {
+                    Host.FontSize = font.Size;
+                    contentFontSize = font.Size;
+                }
+                if (font.Weight == ApeFree.ApeDialogs.Theme.FontWeight.Bold)
+                {
+                    Host.FontWeight = FontWeights.Bold;
+                }
+                if (font.Italic)
+                {
+                    Host.FontStyle = FontStyles.Italic;
+                }
+            }
+
             _contentTextBlock = new TextBlock
             {
                 Text = settings.Content ?? string.Empty,
                 TextWrapping = TextWrapping.Wrap,
-                FontSize = 14,
+                FontSize = contentFontSize,
                 Margin = new Thickness(0, 0, 0, 12),
             };
             _contentTextBlock.SetResourceReference(TextBlock.ForegroundProperty, "ApeTextFillPrimary");
@@ -67,15 +101,31 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
         /// <inheritdoc/>
         public override string Title
         {
-            get => Host.Title;
-            set => Host.Title = value;
+            get
+            {
+                if (Host.Dispatcher.CheckAccess()) return Host.Title;
+                return Host.Dispatcher.Invoke(() => Host.Title);
+            }
+            set
+            {
+                if (Host.Dispatcher.CheckAccess()) Host.Title = value;
+                else Host.Dispatcher.Invoke(() => Host.Title = value);
+            }
         }
 
         /// <inheritdoc/>
         public override string Content
         {
-            get => _contentTextBlock.Text;
-            set => _contentTextBlock.Text = value;
+            get
+            {
+                if (_contentTextBlock.Dispatcher.CheckAccess()) return _contentTextBlock.Text;
+                return _contentTextBlock.Dispatcher.Invoke(() => _contentTextBlock.Text);
+            }
+            set
+            {
+                if (_contentTextBlock.Dispatcher.CheckAccess()) _contentTextBlock.Text = value;
+                else _contentTextBlock.Dispatcher.Invoke(() => _contentTextBlock.Text = value);
+            }
         }
 
         /// <summary>
@@ -137,29 +187,118 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
         /// <inheritdoc/>
         protected override void ShowHandler()
         {
-            var owner = Context;
-            if (owner is not null && owner.Handle != IntPtr.Zero)
+            if (Host.Dispatcher.CheckAccess())
             {
-                new WindowInteropHelper(Host).Owner = owner.Handle;
-                Win32WindowHelper.CenterOverOwner(Host, owner.Handle);
-                Win32WindowHelper.EnableWindow(owner.Handle, false);
+                ShowHandlerCore();
+            }
+            else
+            {
+                Host.Dispatcher.Invoke(ShowHandlerCore);
+            }
+        }
+
+        private void ShowHandlerCore()
+        {
+            if (Settings.DialogSize is ApeSize size && size.Width > 0 && size.Height > 0)
+            {
+                Host.Width = size.Width;
+                Host.Height = size.Height;
+            }
+
+            _effectiveOwner = Context;
+            if ((_effectiveOwner is null || _effectiveOwner.Handle == IntPtr.Zero) &&
+                Application.Current?.MainWindow is Window mainWindow &&
+                mainWindow != Host &&
+                mainWindow.IsVisible)
+            {
+                var handle = new WindowInteropHelper(mainWindow).Handle;
+                if (handle != IntPtr.Zero)
+                {
+                    _effectiveOwner = new WindowOwner(mainWindow);
+                }
+            }
+
+            if (_effectiveOwner is not null && _effectiveOwner.Handle != IntPtr.Zero)
+            {
+                new WindowInteropHelper(Host).Owner = _effectiveOwner.Handle;
+
+                if (System.Threading.Interlocked.CompareExchange(ref _ownerDisabledState, 1, 0) == 0)
+                {
+                    Win32WindowHelper.PushDisableWindow(_effectiveOwner.Handle);
+                }
+
+                Host.SourceInitialized += (_, _) =>
+                {
+                    Win32WindowHelper.CenterOverOwner(Host, _effectiveOwner.Handle);
+                };
+
                 Host.Closed += (s, e) =>
                 {
-                    Win32WindowHelper.EnableWindow(owner.Handle, true);
-                    Win32WindowHelper.SetActiveWindow(owner.Handle);
+                    RestoreOwnerState();
                 };
             }
             else
             {
                 Host.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                Host.ShowInTaskbar = true;
+                Host.Topmost = true;
             }
 
-            Host.Show();
+            lock (ActiveLock)
+            {
+                int cascadeCount = ActiveDialogs.Count;
+                if (cascadeCount > 0)
+                {
+                    int offset = (cascadeCount % 8) * 24;
+                    Host.SourceInitialized += (_, _) =>
+                    {
+                        Host.Left += offset;
+                        Host.Top += offset;
+                    };
+                }
+                ActiveDialogs.Add(Host);
+            }
+
+            Host.Closed += (_, _) =>
+            {
+                lock (ActiveLock)
+                {
+                    ActiveDialogs.Remove(Host);
+                }
+            };
+
+            try
+            {
+                Host.Show();
+            }
+            catch
+            {
+                lock (ActiveLock)
+                {
+                    ActiveDialogs.Remove(Host);
+                }
+                RestoreOwnerState();
+                throw;
+            }
+        }
+
+        private void RestoreOwnerState()
+        {
+            var owner = _effectiveOwner ?? Context;
+            if (owner is not null && owner.Handle != IntPtr.Zero)
+            {
+                if (System.Threading.Interlocked.CompareExchange(ref _ownerDisabledState, 0, 1) == 1)
+                {
+                    Win32WindowHelper.PopEnableWindow(owner.Handle);
+                }
+            }
         }
 
         /// <inheritdoc/>
         protected override void DismissHandler()
         {
+            RestoreOwnerState();
+
             if (Host.Dispatcher.CheckAccess())
             {
                 Host.PlayCloseAnimation();

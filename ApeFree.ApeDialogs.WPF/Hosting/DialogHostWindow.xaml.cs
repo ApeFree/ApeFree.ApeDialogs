@@ -15,6 +15,14 @@ namespace ApeFree.ApeDialogs.WPF.Hosting
     /// </summary>
     public partial class DialogHostWindow : Window
     {
+        private bool _isExplicitlyClosing;
+
+        /// <summary>
+        /// 是否允许取消/关闭窗口（对应 Settings.Cancelable）。
+        /// 若为 false，用户按 Alt+F4 将被拦截并触发抖动动画。
+        /// </summary>
+        public bool Cancelable { get; set; } = true;
+
         /// <summary>
         /// 是否显示关闭按钮（对应 Settings.Cancelable）。
         /// </summary>
@@ -115,11 +123,32 @@ namespace ApeFree.ApeDialogs.WPF.Hosting
         }
 
         /// <summary>
+        /// 显式直接关闭窗口（供 DialogController 提交或取消时调用，绕过 Cancelable 拦截）。
+        /// </summary>
+        public void CloseDirectly()
+        {
+            _isExplicitlyClosing = true;
+            Close();
+        }
+
+        /// <inheritdoc/>
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            base.OnClosing(e);
+
+            if (!_isExplicitlyClosing && !Cancelable)
+            {
+                e.Cancel = true;
+                PlayShakeAnimation();
+            }
+        }
+
+        /// <summary>
         /// 立即关闭窗口。
         /// </summary>
         public void PlayCloseAnimation()
         {
-            Close();
+            CloseDirectly();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -132,6 +161,17 @@ namespace ApeFree.ApeDialogs.WPF.Hosting
             if (OptionsPanel.Children.Count == 0)
             {
                 OptionsPanel.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (Keyboard.FocusedElement is null || Keyboard.FocusedElement == this)
+                    {
+                        var defaultBtn = System.Linq.Enumerable.FirstOrDefault(System.Linq.Enumerable.OfType<Button>(OptionsPanel.Children), b => b.IsEnabled);
+                        defaultBtn?.Focus();
+                    }
+                }), System.Windows.Threading.DispatcherPriority.Input);
             }
 
             PlayOpenAnimation();
@@ -148,6 +188,12 @@ namespace ApeFree.ApeDialogs.WPF.Hosting
 
             if (e.Key == Key.Enter)
             {
+                // 若当前焦点在支持回车换行的多行输入框内，不拦截回车，允许正常换行
+                if (Keyboard.FocusedElement is TextBox textBox && textBox.AcceptsReturn)
+                {
+                    return;
+                }
+
                 ConfirmRequested?.Invoke(this, EventArgs.Empty);
             }
         }

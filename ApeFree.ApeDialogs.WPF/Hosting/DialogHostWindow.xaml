@@ -9,7 +9,9 @@
         ShowInTaskbar="False"
         Background="Transparent"
         FontFamily="{DynamicResource ApeDefaultFontFamily}"
-        TextOptions.TextFormattingMode="Display">
+        TextOptions.TextFormattingMode="Display"
+        KeyboardNavigation.TabNavigation="Cycle"
+        KeyboardNavigation.DirectionalNavigation="Cycle">
 
     <Border x:Name="RootBorder"
             Margin="20"
@@ -59,8 +61,10 @@
                 </Button>
             </Grid>
 
-            <!-- 内容区 -->
-            <ContentControl x:Name="ContentPresenter" Grid.Row="1" Margin="24,8,24,0" />
+            <!-- 内容区（直接承载，保留天然测量边界以支持 ListView/DataGrid 的 UI 虚拟化） -->
+            <ContentControl x:Name="ContentPresenter"
+                            Grid.Row="1"
+                            Margin="24,8,24,0" />
 
             <!-- 选项区 -->
             <StackPanel x:Name="OptionsPanel"

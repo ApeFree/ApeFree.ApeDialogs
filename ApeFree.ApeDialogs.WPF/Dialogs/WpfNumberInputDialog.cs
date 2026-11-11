@@ -48,6 +48,11 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
             Host.SetDialogContent(panel);
 
             AddDefaultOptions();
+
+            Host.Loaded += (_, _) =>
+            {
+                _numeric.Focus();
+            };
         }
 
         /// <inheritdoc/>

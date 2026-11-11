@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using ApeFree.ApeDialogs.Core;
 using ApeFree.ApeDialogs.Settings;
 using ApeFree.ApeDialogs.Theme;
@@ -35,82 +37,195 @@ namespace ApeFree.ApeDialogs.WPF
             _theme = theme ?? throw new ArgumentNullException(nameof(theme));
         }
 
+        private static readonly object StaLock = new();
+        private static System.Windows.Threading.Dispatcher? _backgroundStaDispatcher;
+
+        /// <summary>
+        /// 确保获得可用的 STA Dispatcher 实例。
+        /// 1. 若宿主已存在 Application.Current（WPF 宿主），直接使用其 Dispatcher；
+        /// 2. 若当前为 STA 线程（如 WinForms UI 线程），在当前线程预初始化 ThemeManager；
+        /// 3. 若环境无 Application 且当前为非 STA 工作线程，启动常驻后台 STA 线程驱动 Dispatcher。
+        /// </summary>
+        public static System.Windows.Threading.Dispatcher EnsureDispatcher()
+        {
+            if (System.Windows.Application.Current?.Dispatcher is { } currentDispatcher)
+            {
+                return currentDispatcher;
+            }
+
+            lock (StaLock)
+            {
+                if (System.Windows.Application.Current?.Dispatcher is { } appDispatcher)
+                {
+                    return appDispatcher;
+                }
+
+                if (_backgroundStaDispatcher is not null && !_backgroundStaDispatcher.HasShutdownStarted)
+                {
+                    return _backgroundStaDispatcher;
+                }
+
+                if (Thread.CurrentThread.GetApartmentState() == ApartmentState.STA)
+                {
+                    ThemeManager.EnsureLoaded();
+                    if (System.Windows.Application.Current?.Dispatcher is { } staDispatcher)
+                    {
+                        return staDispatcher;
+                    }
+                }
+
+                var readyEvent = new ManualResetEventSlim(false);
+                var thread = new Thread(() =>
+                {
+                    try
+                    {
+                        if (System.Windows.Application.Current is null)
+                        {
+                            _ = new System.Windows.Application { ShutdownMode = System.Windows.ShutdownMode.OnExplicitShutdown };
+                        }
+                        ThemeManager.EnsureLoaded();
+                    }
+                    catch
+                    {
+                        // 忽略已初始化冲突
+                    }
+                    finally
+                    {
+                        _backgroundStaDispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+                        readyEvent.Set();
+                    }
+                    System.Windows.Threading.Dispatcher.Run();
+                })
+                {
+                    IsBackground = true,
+                    Name = "ApeDialogs_STA_Host"
+                };
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+
+                readyEvent.Wait(5000);
+                return _backgroundStaDispatcher ?? System.Windows.Threading.Dispatcher.CurrentDispatcher;
+            }
+        }
+
+        private static TDialog CreateOnUIThread<TDialog>(Func<TDialog> factory)
+        {
+            var dispatcher = EnsureDispatcher();
+            if (dispatcher.CheckAccess())
+            {
+                return factory();
+            }
+            return dispatcher.Invoke(factory);
+        }
+
         /// <inheritdoc/>
         public override IDialog<bool> CreateMessageDialog(MessageDialogSettings settings, IWin32Owner? context = null)
-            => new WpfMessageDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfMessageDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<bool> CreatePromptDialog(PromptDialogSettings settings, IWin32Owner? context = null)
-            => new WpfPromptDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfPromptDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<string> CreateInputDialog(InputDialogSettings settings, IWin32Owner? context = null)
-            => new WpfInputDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfInputDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<string> CreatePasswordDialog(PasswordDialogSettings settings, IWin32Owner? context = null)
-            => new WpfPasswordDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfPasswordDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<bool> CreateTextDialog(TextDialogSettings settings, IWin32Owner? context = null)
-            => new WpfTextDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfTextDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<bool> CreateToastDialog(ToastDialogSettings settings, IWin32Owner? context = null)
-            => new WpfToastDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfToastDialog(settings, context, _theme));
 
         // ========== 以下类型将在后续里程碑实现 ==========
 
         /// <inheritdoc/>
         public override IDialog<T> CreateSelectionDialog<T>(SelectionDialogSettings<T> settings, IEnumerable<T> collection, T defaultSelectedItem = default!, IWin32Owner? context = null)
-            => new WpfSelectionDialog<T>(settings, collection, defaultSelectedItem, context, _theme);
+            => CreateOnUIThread(() => new WpfSelectionDialog<T>(settings, collection, defaultSelectedItem, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<IReadOnlyList<T>> CreateMultipleSelectionDialog<T>(MultipleSelectionDialogSettings<T> settings, IEnumerable<T> collection, IEnumerable<T>? defaultSelectedItems = null, IWin32Owner? context = null)
-            => new WpfMultipleSelectionDialog<T>(settings, collection, defaultSelectedItems, context, _theme);
+            => CreateOnUIThread(() => new WpfMultipleSelectionDialog<T>(settings, collection, defaultSelectedItems, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<DateTime> CreateDateTimeDialog(DateTimeDialogSettings settings, IWin32Owner? context = null)
-            => new WpfDateTimeDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfDateTimeDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<string> CreateComboBoxInputDialog(ComboBoxInputDialogSettings settings, IWin32Owner? context = null)
-            => new WpfComboBoxInputDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfComboBoxInputDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<decimal> CreateNumberInputDialog(NumberInputDialogSettings settings, IWin32Owner? context = null)
-            => new WpfNumberInputDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfNumberInputDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IAdjustDialog<decimal> CreateSliderDialog(SliderDialogSettings settings, IWin32Owner? context = null)
-            => new WpfSliderDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfSliderDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IAdjustDialog<ValueRange<decimal>> CreateRangeSliderDialog(RangeSliderDialogSettings settings, IWin32Owner? context = null)
-            => new WpfRangeSliderDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfRangeSliderDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IProgressDialog CreateProgressDialog(ProgressDialogSettings settings, IWin32Owner? context = null)
-            => new WpfProgressDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfProgressDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<ApeColor> CreateColorDialog(ColorDialogSettings settings, IWin32Owner? context = null)
-            => new WpfColorDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfColorDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<DataEntrySheet> CreateDataEntrySheetDialog(DataEntrySheet sheet, DataEntrySheetDialogSettings settings, IWin32Owner? context = null)
-            => new WpfDataEntrySheetDialog(sheet, settings, context, _theme);
+            => CreateOnUIThread(() => new WpfDataEntrySheetDialog(sheet, settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<IReadOnlyList<string>> CreateOpenFileDialog(OpenFileDialogSettings settings, IWin32Owner? context = null)
-            => new WpfOpenFileDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfOpenFileDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<IReadOnlyList<string>> CreateOpenFolderDialog(OpenFolderDialogSettings settings, IWin32Owner? context = null)
-            => new WpfOpenFolderDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfOpenFolderDialog(settings, context, _theme));
 
         /// <inheritdoc/>
         public override IDialog<string> CreateSaveFileDialog(SaveFileDialogSettings settings, IWin32Owner? context = null)
-            => new WpfSaveFileDialog(settings, context, _theme);
+            => CreateOnUIThread(() => new WpfSaveFileDialog(settings, context, _theme));
+
+        /// <inheritdoc/>
+        protected override async Task<DialogResult<TResult>> ShowAsync<TResult>(Func<IDialog<TResult>> dialogFactory, CancellationToken cancellationToken)
+        {
+            var dispatcher = EnsureDispatcher();
+
+            if (dispatcher.CheckAccess())
+            {
+                return await base.ShowAsync(dialogFactory, cancellationToken).ConfigureAwait(false);
+            }
+
+            return await dispatcher.InvokeAsync(async () =>
+            {
+                return await base.ShowAsync(dialogFactory, cancellationToken).ConfigureAwait(false);
+            }).Task.Unwrap().ConfigureAwait(false);
+        }
+
+        /// <inheritdoc/>
+        protected override async Task<DialogResult<TResult>> ShowAsync<TResult>(IDialog<TResult> dialog, CancellationToken cancellationToken)
+        {
+            var dispatcher = EnsureDispatcher();
+
+            if (dispatcher.CheckAccess())
+            {
+                return await base.ShowAsync(dialog, cancellationToken).ConfigureAwait(false);
+            }
+
+            return await dispatcher.InvokeAsync(async () =>
+            {
+                return await base.ShowAsync(dialog, cancellationToken).ConfigureAwait(false);
+            }).Task.Unwrap().ConfigureAwait(false);
+        }
     }
 }
