@@ -165,6 +165,53 @@ namespace ApeFree.ApeDialogs.Tests
         }
 
         [Fact]
+        public async Task ShowAsync_AfterDismissed_ThrowsInvalidOperationException()
+        {
+            var dialog = new TestDialog<string>(new InputDialogSettings());
+            var task = dialog.ShowAsync();
+            dialog.SimulateSubmit("done");
+            await task;
+
+            // 二次调用已被关闭的对话框实例，必须明确抛出异常，杜绝返回旧 Task 的假完成 Bug
+            var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => dialog.ShowAsync());
+            Assert.Contains("dismissed", ex.Message, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task Dismiss_ConcurrentCalls_ExecutesDismissHandlerAndEventsOnlyOnce()
+        {
+            int dismissCount = 0;
+            var dialog = new TestDialog<string>(new InputDialogSettings());
+            dialog.Dismissed += (_, _) => Interlocked.Increment(ref dismissCount);
+
+            var task = dialog.ShowAsync();
+
+            // 多线程同时触发 Dismiss / Cancel
+            var tasks = new Task[10];
+            for (int i = 0; i < 10; i++)
+            {
+                var index = i;
+                tasks[i] = Task.Run(() =>
+                {
+                    if (index % 2 == 0)
+                    {
+                        dialog.SimulateSubmit($"val_{index}");
+                    }
+                    else
+                    {
+                        dialog.Cancel();
+                    }
+                });
+            }
+
+            await Task.WhenAll(tasks);
+            var result = await task;
+
+            // 结果只由最先到达的线程决定，Dismissed 事件与销毁逻辑绝对只触发 1 次
+            Assert.Equal(1, dismissCount);
+        }
+
+        [Fact]
         public async Task Dismiss_AfterDismiss_IsNoOp()
         {
             var dialog = new TestDialog<string>(new InputDialogSettings());

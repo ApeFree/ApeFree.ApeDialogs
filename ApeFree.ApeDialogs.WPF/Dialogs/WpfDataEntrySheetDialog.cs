@@ -270,13 +270,13 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
                         return true;
                     }
 
-                    ShowError("该字段不允许为空");
+                    ShowError(DialogLocalization.RequiredFieldEmpty);
                     return false;
                 }
 
                 if (text.Length % 2 != 0)
                 {
-                    ShowError("十六进制长度必须为偶数");
+                    ShowError(DialogLocalization.HexLengthMustBeEven);
                     return false;
                 }
 
@@ -289,7 +289,7 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
                 }
                 catch (FormatException)
                 {
-                    ShowError("包含无效的十六进制字符");
+                    ShowError(DialogLocalization.HexContainsInvalidChars);
                     return false;
                 }
             }
@@ -523,7 +523,7 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
                     return true;
                 }
 
-                ShowError($"日期格式应为 {_field.DateTimeFormat}");
+                ShowError(DialogLocalization.DateFormatExpected(_field.DateTimeFormat));
                 return false;
             }
         }

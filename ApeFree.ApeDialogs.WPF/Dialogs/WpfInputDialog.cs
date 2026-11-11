@@ -54,6 +54,12 @@ namespace ApeFree.ApeDialogs.WPF.Dialogs
             Host.SetDialogContent(panel);
 
             AddDefaultOptions();
+
+            Host.Loaded += (_, _) =>
+            {
+                _textBox.Focus();
+                _textBox.SelectAll();
+            };
         }
 
         /// <inheritdoc/>

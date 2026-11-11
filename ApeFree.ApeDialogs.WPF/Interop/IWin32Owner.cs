@@ -30,6 +30,11 @@ namespace ApeFree.ApeDialogs.WPF.Interop
             _window = window ?? throw new ArgumentNullException(nameof(window));
         }
 
+        /// <summary>
+        /// 获取关联的 WPF Window 实例。
+        /// </summary>
+        public Window Window => _window;
+
         /// <inheritdoc/>
         public IntPtr Handle
         {

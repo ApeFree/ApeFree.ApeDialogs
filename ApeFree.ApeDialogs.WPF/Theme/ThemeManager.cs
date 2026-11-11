@@ -251,7 +251,7 @@ namespace ApeFree.ApeDialogs.WPF.Theme
         {
             get
             {
-                var color = ThemeManager.GetColor(ThemeManager.IsDarkMode ? "ApeAccentTextPrimary" : "ApeAccentTextPrimary");
+                var color = ThemeManager.GetColor("ApeAccentTextPrimary");
                 return new ApeColor(color.A, color.R, color.G, color.B);
             }
         }

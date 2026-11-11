@@ -15,6 +15,12 @@ namespace ApeFree.ApeDialogs.Core
     /// <typeparam name="TResult">结果数据类型</typeparam>
     public abstract class BaseDialog<TView, TOption, TContext, TResult> : IDialogController<TResult>, IDisposable
     {
+        private const int StateCreated = 0;
+        private const int StateShowing = 1;
+        private const int StateDismissed = 2;
+
+        private int _state = StateCreated;
+
 #if NET45 || NET451 || NET452
         private readonly TaskCompletionSource<DialogResult<TResult>> _completionSource = new();
 #else
@@ -76,7 +82,7 @@ namespace ApeFree.ApeDialogs.Core
         /// <summary>
         /// 是否正在显示。
         /// </summary>
-        public bool IsShown { get; private set; }
+        public bool IsShown => Volatile.Read(ref _state) == StateShowing;
 
         /// <inheritdoc/>
         public event EventHandler<DialogEventArgs>? Showing;
@@ -98,8 +104,13 @@ namespace ApeFree.ApeDialogs.Core
                 return DialogResult<TResult>.Canceled;
             }
 
-            if (IsShown)
+            if (Interlocked.CompareExchange(ref _state, StateShowing, StateCreated) != StateCreated)
             {
+                var currentState = Volatile.Read(ref _state);
+                if (currentState == StateDismissed)
+                {
+                    throw new InvalidOperationException("The dialog has already been dismissed and cannot be reused.");
+                }
                 throw new InvalidOperationException("The dialog has already been shown.");
             }
 
@@ -146,17 +157,23 @@ namespace ApeFree.ApeDialogs.Core
         /// <inheritdoc/>
         public void Dismiss(DialogResult<TResult> result)
         {
-            if (_completionSource.Task.IsCompleted)
+            if (!_completionSource.TrySetResult(result))
             {
                 return;
             }
 
-            _completionSource.TrySetResult(result);
-            _autoDismissCts.Cancel();
+            Interlocked.Exchange(ref _state, StateDismissed);
+
+            try
+            {
+                _autoDismissCts.Cancel();
+            }
+            catch (ObjectDisposedException)
+            {
+            }
 
             RaiseDismissing();
             DismissHandler();
-            IsShown = false;
             RaiseDismissed();
         }
 
@@ -186,11 +203,10 @@ namespace ApeFree.ApeDialogs.Core
         protected abstract void DismissHandler();
 
         /// <summary>
-        /// 触发 <see cref="Showing"/> 事件。由实现方在视图显示后调用。
+        /// 触发 <see cref="Shown"/> 事件。由实现方在视图显示后调用。
         /// </summary>
         protected void RaiseShown()
         {
-            IsShown = true;
             Shown?.Invoke(this, new DialogEventArgs());
             Settings.OnShown?.Invoke(this);
         }

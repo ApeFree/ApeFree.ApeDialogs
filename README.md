@@ -193,9 +193,22 @@ var result = await provider.ShowPromptDialogAsync(new PromptDialogSettings
     NegativeOption = new DialogOption("保留", DialogOptionTag.Positive),
 });
 
-result.Match(
-    onConfirmed: () => Console.WriteLine("执行删除"),
-    onCanceled: () => Console.WriteLine("保留文件"));
+// 推荐用法：按确认结果与选项布尔值分支处理
+if (result.IsConfirmed)
+{
+    if (result.Value)
+    {
+        Console.WriteLine("执行删除");
+    }
+    else
+    {
+        Console.WriteLine("保留文件");
+    }
+}
+else
+{
+    Console.WriteLine("取消操作");
+}
 ```
 
 ### 3. 输入对话框（InputDialog）

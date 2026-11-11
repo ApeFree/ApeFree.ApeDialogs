@@ -32,7 +32,7 @@ dotnet add package ApeFree.ApeDialogs
 或在项目文件（`.csproj`）中添加引用：
 
 ```xml
-<PackageReference Include="ApeFree.ApeDialogs" Version="1.0.2.1-alpha260907" />
+<PackageReference Include="ApeFree.ApeDialogs" Version="1.1.0.0-alpha61111" />
 ```
 
 ---

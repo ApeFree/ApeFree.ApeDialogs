@@ -16,6 +16,7 @@ namespace ApeFree.ApeDialogs.WPF.Controls
         private Button? _upButton;
         private Button? _downButton;
         private bool _suppressTextUpdate;
+        private bool _isUserTyping;
 
         static ApeNumericUpDown()
         {
@@ -132,6 +133,7 @@ namespace ApeFree.ApeDialogs.WPF.Controls
             {
                 _textBox.TextChanged += OnTextChanged;
                 _textBox.LostFocus += OnTextBoxLostFocus;
+                _textBox.PreviewKeyDown += OnTextBoxPreviewKeyDown;
             }
 
             if (_upButton is not null)
@@ -148,17 +150,40 @@ namespace ApeFree.ApeDialogs.WPF.Controls
             UpdateButtonStates();
         }
 
+        private string? _unappliedText;
+
         /// <summary>
         /// 将当前输入文本提交为值（输入不完整/非法时回退到当前值）。
         /// </summary>
         public void Commit()
         {
-            if (_textBox is not null && decimal.TryParse(_textBox.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out var parsed))
+            var text = _textBox?.Text ?? _unappliedText;
+            if (text is not null && decimal.TryParse(text, NumberStyles.Number, CultureInfo.CurrentCulture, out var parsed))
             {
                 SetCurrentValue(ValueProperty, Clamp(parsed));
+                _unappliedText = null;
             }
 
             UpdateText();
+        }
+
+        /// <summary>
+        /// 当前文本框输入文本。
+        /// </summary>
+        public string? Text
+        {
+            get => _textBox?.Text ?? _unappliedText ?? FormatValue(Value);
+            set
+            {
+                if (_textBox is not null)
+                {
+                    _textBox.Text = value;
+                }
+                else
+                {
+                    _unappliedText = value;
+                }
+            }
         }
 
         private static decimal Clamp(decimal value, decimal minimum, decimal maximum)
@@ -182,6 +207,7 @@ namespace ApeFree.ApeDialogs.WPF.Controls
 
         private void UpdateText()
         {
+            _unappliedText = null;
             if (_textBox is null)
             {
                 return;
@@ -213,17 +239,33 @@ namespace ApeFree.ApeDialogs.WPF.Controls
                 return;
             }
 
-            if (decimal.TryParse(_textBox.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out var parsed))
+            _isUserTyping = true;
+            try
             {
-                var clamped = Clamp(parsed);
-                if (clamped != Value)
+                if (decimal.TryParse(_textBox.Text, NumberStyles.Number, CultureInfo.CurrentCulture, out var parsed))
                 {
-                    SetCurrentValue(ValueProperty, clamped);
+                    if (parsed >= Minimum && parsed <= Maximum && parsed != Value)
+                    {
+                        SetCurrentValue(ValueProperty, parsed);
+                    }
                 }
+            }
+            finally
+            {
+                _isUserTyping = false;
             }
         }
 
-        private void OnTextBoxLostFocus(object sender, RoutedEventArgs e) => UpdateText();
+        private void OnTextBoxPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Commit();
+                e.Handled = true;
+            }
+        }
+
+        private void OnTextBoxLostFocus(object sender, RoutedEventArgs e) => Commit();
 
         private void OnUpClick(object sender, RoutedEventArgs e) => SetCurrentValue(ValueProperty, Clamp(Value + Increment));
 
@@ -232,7 +274,10 @@ namespace ApeFree.ApeDialogs.WPF.Controls
         private static void OnValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var control = (ApeNumericUpDown)d;
-            control.UpdateText();
+            if (!control._isUserTyping)
+            {
+                control.UpdateText();
+            }
             control.UpdateButtonStates();
             control.ValueChanged?.Invoke(control, EventArgs.Empty);
         }

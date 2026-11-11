@@ -22,6 +22,12 @@ namespace ApeFree.ApeDialogs.Core
             return new ValidationResult(false, errorMessage);
         }
 
+        /// <summary>
+        /// 构造一个校验失败的结果（<see cref="Failure"/> 的别名）。
+        /// </summary>
+        /// <param name="errorMessage">错误信息</param>
+        public static ValidationResult Failed(string errorMessage) => Failure(errorMessage);
+
         public override string ToString() => IsSuccess ? "Success" : ErrorMessage ?? "Failed";
     }
 }

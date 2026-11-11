@@ -146,5 +146,20 @@ namespace ApeFree.ApeDialogs.Tests
             Assert.Equal("默认值", inputSettings.DefaultText);
             Assert.True(inputSettings.IsMultiline);
         }
+
+        [Fact]
+        public async Task ShowAsync_CalledFromBackgroundThread_ExecutesFactoryAndReturnsResult()
+        {
+            var result = await Task.Run(async () =>
+            {
+                var task = _provider.ShowPromptDialogAsync(new PromptDialogSettings());
+                var dialog = _provider.LastCreatedDialog<bool>();
+                dialog.SimulateSubmit(true);
+                return await task;
+            });
+
+            Assert.False(result.IsCanceled);
+            Assert.True(result.Value);
+        }
     }
 }

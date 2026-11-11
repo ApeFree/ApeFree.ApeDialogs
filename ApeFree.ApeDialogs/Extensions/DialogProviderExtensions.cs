@@ -31,7 +31,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示消息对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<bool>> ShowMessageDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<MessageDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateMessageDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new MessageDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowMessageDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateMessageDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -53,7 +63,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示提示对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<bool>> ShowPromptDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<PromptDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreatePromptDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new PromptDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowPromptDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreatePromptDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -75,7 +95,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示输入对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<string>> ShowInputDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<InputDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateInputDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new InputDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowInputDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateInputDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -97,7 +127,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示密码对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<string>> ShowPasswordDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<PasswordDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreatePasswordDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new PasswordDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowPasswordDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreatePasswordDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -124,13 +164,23 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示单选对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<T>> ShowSelectionDialogAsync<T, TContext>(this IDialogProvider<TContext> provider, IEnumerable<T> collection, T defaultSelectedItem, Action<SelectionDialogSettings<T>>? configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateSelectionDialog(collection, defaultSelectedItem, configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (collection is null) throw new ArgumentNullException(nameof(collection));
+            var settings = new SelectionDialogSettings<T>();
+            configure?.Invoke(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowSelectionDialogAsync(settings, collection, defaultSelectedItem, context, cancellationToken);
+            }
+            return provider.CreateSelectionDialog(settings, collection, defaultSelectedItem, context).ShowAsync(cancellationToken);
+        }
 
         /// <summary>
         /// 通过配置委托显示单选对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<T>> ShowSelectionDialogAsync<T, TContext>(this IDialogProvider<TContext> provider, IEnumerable<T> collection, Action<SelectionDialogSettings<T>> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateSelectionDialog(collection, default!, configure, context).ShowAsync(cancellationToken);
+            => provider.ShowSelectionDialogAsync(collection, default!, configure, context, cancellationToken);
 
         #endregion
 
@@ -157,13 +207,23 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示多选对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<IReadOnlyList<T>>> ShowMultipleSelectionDialogAsync<T, TContext>(this IDialogProvider<TContext> provider, IEnumerable<T> collection, IEnumerable<T>? defaultSelectedItems, Action<MultipleSelectionDialogSettings<T>>? configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateMultipleSelectionDialog(collection, defaultSelectedItems, configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (collection is null) throw new ArgumentNullException(nameof(collection));
+            var settings = new MultipleSelectionDialogSettings<T>();
+            configure?.Invoke(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowMultipleSelectionDialogAsync(settings, collection, defaultSelectedItems, context, cancellationToken);
+            }
+            return provider.CreateMultipleSelectionDialog(settings, collection, defaultSelectedItems, context).ShowAsync(cancellationToken);
+        }
 
         /// <summary>
         /// 通过配置委托显示多选对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<IReadOnlyList<T>>> ShowMultipleSelectionDialogAsync<T, TContext>(this IDialogProvider<TContext> provider, IEnumerable<T> collection, Action<MultipleSelectionDialogSettings<T>> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateMultipleSelectionDialog(collection, null, configure, context).ShowAsync(cancellationToken);
+            => provider.ShowMultipleSelectionDialogAsync(collection, null, configure, context, cancellationToken);
 
         #endregion
 
@@ -185,7 +245,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示日期时间对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<DateTime>> ShowDateTimeDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<DateTimeDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateDateTimeDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new DateTimeDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowDateTimeDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateDateTimeDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -206,7 +276,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示多字段表单对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<DataEntrySheet>> ShowDataEntrySheetDialogAsync<TContext>(this IDialogProvider<TContext> provider, DataEntrySheet sheet, Action<DataEntrySheetDialogSettings>? configure = null, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateDataEntrySheetDialog(sheet, configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (sheet is null) throw new ArgumentNullException(nameof(sheet));
+            var settings = new DataEntrySheetDialogSettings();
+            configure?.Invoke(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowDataEntrySheetDialogAsync(sheet, settings, context, cancellationToken);
+            }
+            return provider.CreateDataEntrySheetDialog(sheet, settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -228,7 +308,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示打开文件对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<IReadOnlyList<string>>> ShowOpenFileDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<OpenFileDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateOpenFileDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new OpenFileDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowOpenFileDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateOpenFileDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -250,7 +340,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示打开文件夹对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<IReadOnlyList<string>>> ShowOpenFolderDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<OpenFolderDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateOpenFolderDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new OpenFolderDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowOpenFolderDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateOpenFolderDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -272,7 +372,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示数值输入对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<decimal>> ShowNumberInputDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<NumberInputDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateNumberInputDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new NumberInputDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowNumberInputDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateNumberInputDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -294,7 +404,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示单滑块调节对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<decimal>> ShowSliderDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<SliderDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateSliderDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new SliderDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowSliderDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateSliderDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -316,7 +436,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示双滑块范围调节对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<ValueRange<decimal>>> ShowRangeSliderDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<RangeSliderDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateRangeSliderDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new RangeSliderDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowRangeSliderDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateRangeSliderDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -338,7 +468,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示进度对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<bool>> ShowProgressDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<ProgressDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateProgressDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new ProgressDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowProgressDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateProgressDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -360,7 +500,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示轻提示对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<bool>> ShowToastDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<ToastDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateToastDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new ToastDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowToastDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateToastDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -382,7 +532,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示长文本查看对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<bool>> ShowTextDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<TextDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateTextDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new TextDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowTextDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateTextDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -404,7 +564,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示颜色选择对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<ApeColor>> ShowColorDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<ColorDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateColorDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new ColorDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowColorDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateColorDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -426,7 +596,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示保存文件对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<string>> ShowSaveFileDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<SaveFileDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateSaveFileDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new SaveFileDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowSaveFileDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateSaveFileDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
 
@@ -448,7 +628,17 @@ namespace ApeFree.ApeDialogs
         /// 通过配置委托显示可编辑下拉输入对话框并等待结果。
         /// </summary>
         public static Task<DialogResult<string>> ShowComboBoxInputDialogAsync<TContext>(this IDialogProvider<TContext> provider, Action<ComboBoxInputDialogSettings> configure, TContext? context = default, CancellationToken cancellationToken = default)
-            => provider.CreateComboBoxInputDialog(configure, context).ShowAsync(cancellationToken);
+        {
+            if (provider is null) throw new ArgumentNullException(nameof(provider));
+            if (configure is null) throw new ArgumentNullException(nameof(configure));
+            var settings = new ComboBoxInputDialogSettings();
+            configure(settings);
+            if (provider is DialogProvider<TContext> dp)
+            {
+                return dp.ShowComboBoxInputDialogAsync(settings, context, cancellationToken);
+            }
+            return provider.CreateComboBoxInputDialog(settings, context).ShowAsync(cancellationToken);
+        }
 
         #endregion
     }
