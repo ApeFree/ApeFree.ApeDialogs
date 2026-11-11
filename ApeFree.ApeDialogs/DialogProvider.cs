@@ -81,117 +81,151 @@ namespace ApeFree.ApeDialogs
         /// 显示消息对话框并等待结果。
         /// </summary>
         public Task<DialogResult<bool>> ShowMessageDialogAsync(MessageDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateMessageDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateMessageDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示提示对话框并等待结果。
         /// </summary>
         public Task<DialogResult<bool>> ShowPromptDialogAsync(PromptDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreatePromptDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreatePromptDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示输入对话框并等待结果。
         /// </summary>
         public Task<DialogResult<string>> ShowInputDialogAsync(InputDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateInputDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateInputDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示密码对话框并等待结果。
         /// </summary>
         public Task<DialogResult<string>> ShowPasswordDialogAsync(PasswordDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreatePasswordDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreatePasswordDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示单选对话框并等待结果。
         /// </summary>
         public Task<DialogResult<T>> ShowSelectionDialogAsync<T>(SelectionDialogSettings<T> settings, IEnumerable<T> collection, T defaultSelectedItem = default!, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateSelectionDialog(settings, collection, defaultSelectedItem, context), cancellationToken);
+            => ShowAsync(() => CreateSelectionDialog(settings, collection, defaultSelectedItem, context), cancellationToken);
 
         /// <summary>
         /// 显示多选对话框并等待结果。
         /// </summary>
         public Task<DialogResult<IReadOnlyList<T>>> ShowMultipleSelectionDialogAsync<T>(MultipleSelectionDialogSettings<T> settings, IEnumerable<T> collection, IEnumerable<T>? defaultSelectedItems = null, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateMultipleSelectionDialog(settings, collection, defaultSelectedItems, context), cancellationToken);
+            => ShowAsync(() => CreateMultipleSelectionDialog(settings, collection, defaultSelectedItems, context), cancellationToken);
 
         /// <summary>
         /// 显示日期时间对话框并等待结果。
         /// </summary>
         public Task<DialogResult<DateTime>> ShowDateTimeDialogAsync(DateTimeDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateDateTimeDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateDateTimeDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示多字段表单对话框并等待结果。
         /// </summary>
         public Task<DialogResult<DataEntrySheet>> ShowDataEntrySheetDialogAsync(DataEntrySheet sheet, DataEntrySheetDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateDataEntrySheetDialog(sheet, settings, context), cancellationToken);
+            => ShowAsync(() => CreateDataEntrySheetDialog(sheet, settings, context), cancellationToken);
 
         /// <summary>
         /// 显示打开文件对话框并等待结果。
         /// </summary>
         public Task<DialogResult<IReadOnlyList<string>>> ShowOpenFileDialogAsync(OpenFileDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateOpenFileDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateOpenFileDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示打开文件夹对话框并等待结果。
         /// </summary>
         public Task<DialogResult<IReadOnlyList<string>>> ShowOpenFolderDialogAsync(OpenFolderDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateOpenFolderDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateOpenFolderDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示数值输入对话框并等待结果。
         /// </summary>
         public Task<DialogResult<decimal>> ShowNumberInputDialogAsync(NumberInputDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateNumberInputDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateNumberInputDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示单滑块调节对话框并等待结果（调节过程经 <see cref="DialogSettings{TResult}.OnValueChanged"/> 实时影响外界）。
         /// </summary>
         public Task<DialogResult<decimal>> ShowSliderDialogAsync(SliderDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateSliderDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateSliderDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示双滑块范围调节对话框并等待结果。
         /// </summary>
         public Task<DialogResult<ValueRange<decimal>>> ShowRangeSliderDialogAsync(RangeSliderDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateRangeSliderDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateRangeSliderDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示进度对话框并等待结果（显示期间通过 <see cref="IProgressDialog"/> 推进进度）。
         /// </summary>
         public Task<DialogResult<bool>> ShowProgressDialogAsync(ProgressDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateProgressDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateProgressDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示轻提示对话框（通常不等待该 Task，按 Duration 自动消失）。
         /// </summary>
         public Task<DialogResult<bool>> ShowToastDialogAsync(ToastDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateToastDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateToastDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示长文本查看对话框并等待结果。
         /// </summary>
         public Task<DialogResult<bool>> ShowTextDialogAsync(TextDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateTextDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateTextDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示颜色选择对话框并等待结果。
         /// </summary>
         public Task<DialogResult<ApeColor>> ShowColorDialogAsync(ColorDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateColorDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateColorDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示保存文件对话框并等待结果。
         /// </summary>
         public Task<DialogResult<string>> ShowSaveFileDialogAsync(SaveFileDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateSaveFileDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateSaveFileDialog(settings, context), cancellationToken);
 
         /// <summary>
         /// 显示可编辑下拉输入对话框并等待结果。
         /// </summary>
         public Task<DialogResult<string>> ShowComboBoxInputDialogAsync(ComboBoxInputDialogSettings settings, TContext? context = default, CancellationToken cancellationToken = default)
-            => ShowAsync(CreateComboBoxInputDialog(settings, context), cancellationToken);
+            => ShowAsync(() => CreateComboBoxInputDialog(settings, context), cancellationToken);
 
-        private static Task<DialogResult<TResult>> ShowAsync<TResult>(IDialog<TResult> dialog, CancellationToken cancellationToken)
-            => dialog.ShowAsync(cancellationToken);
+        /// <summary>
+        /// 执行对话框创建与展示。实现方可重写此方法以注入 UI 线程调度逻辑。
+        /// </summary>
+        /// <typeparam name="TResult">结果数据类型</typeparam>
+        /// <param name="dialogFactory">对话框创建工厂</param>
+        /// <param name="cancellationToken">取消标记</param>
+        /// <returns>对话框结果</returns>
+        protected virtual async Task<DialogResult<TResult>> ShowAsync<TResult>(Func<IDialog<TResult>> dialogFactory, CancellationToken cancellationToken)
+        {
+            if (dialogFactory is null) throw new ArgumentNullException(nameof(dialogFactory));
+            var dialog = dialogFactory();
+            try
+            {
+                return await dialog.ShowAsync(cancellationToken).ConfigureAwait(false);
+            }
+            finally
+            {
+                if (dialog is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
+        }
+
+        /// <summary>
+        /// 显示指定对话框并等待结果。
+        /// </summary>
+        /// <typeparam name="TResult">结果数据类型</typeparam>
+        /// <param name="dialog">对话框实例</param>
+        /// <param name="cancellationToken">取消标记</param>
+        /// <returns>对话框结果</returns>
+        protected virtual Task<DialogResult<TResult>> ShowAsync<TResult>(IDialog<TResult> dialog, CancellationToken cancellationToken)
+        {
+            if (dialog is null) throw new ArgumentNullException(nameof(dialog));
+            return dialog.ShowAsync(cancellationToken);
+        }
     }
 }
