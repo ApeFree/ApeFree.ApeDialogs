@@ -21,6 +21,11 @@ namespace ApeFree.ApeDialogs.Core
         public static DialogResult<T> Canceled => new(default, true);
 
         /// <summary>
+        /// 是否已确认（即未被取消）。
+        /// </summary>
+        public bool IsConfirmed => !IsCanceled;
+
+        /// <summary>
         /// 取消时抛出 <see cref="InvalidOperationException"/>，否则返回结果值。
         /// </summary>
         public T RequireValue()
@@ -42,6 +47,24 @@ namespace ApeFree.ApeDialogs.Core
             if (onCanceled is null) { throw new ArgumentNullException(nameof(onCanceled)); }
 
             return IsCanceled ? onCanceled() : onConfirmed(Value!);
+        }
+
+        /// <summary>
+        /// 按结果状态分支执行无返回值动作。
+        /// </summary>
+        public void Match(Action<T> onConfirmed, Action onCanceled)
+        {
+            if (onConfirmed is null) { throw new ArgumentNullException(nameof(onConfirmed)); }
+            if (onCanceled is null) { throw new ArgumentNullException(nameof(onCanceled)); }
+
+            if (IsCanceled)
+            {
+                onCanceled();
+            }
+            else
+            {
+                onConfirmed(Value!);
+            }
         }
     }
 }

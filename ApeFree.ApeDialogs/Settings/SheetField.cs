@@ -98,6 +98,17 @@ namespace ApeFree.ApeDialogs.Settings
         /// 是否多行。
         /// </summary>
         public bool IsMultiline { get; set; }
+
+        /// <inheritdoc/>
+        public override ValidationResult Validate()
+        {
+            if (Value is not null && Value.Length > MaximumLength)
+            {
+                return ValidationResult.Failed(DialogLocalization.TextLengthExceeded(MaximumLength));
+            }
+
+            return base.Validate();
+        }
     }
 
     /// <summary>
@@ -117,6 +128,17 @@ namespace ApeFree.ApeDialogs.Settings
         /// 密码遮掩字符。
         /// </summary>
         public char PasswordChar { get; set; } = '●';
+
+        /// <inheritdoc/>
+        public override ValidationResult Validate()
+        {
+            if (Value is not null && Value.Length > MaximumLength)
+            {
+                return ValidationResult.Failed(DialogLocalization.PasswordLengthExceeded(MaximumLength));
+            }
+
+            return base.Validate();
+        }
     }
 
     /// <summary>
@@ -146,6 +168,30 @@ namespace ApeFree.ApeDialogs.Settings
         /// 是否多行。
         /// </summary>
         public bool IsMultiline { get; set; } = true;
+
+        /// <inheritdoc/>
+        public override ValidationResult Validate()
+        {
+            if (!AllowEmpty && (Value is null || Value.Length == 0))
+            {
+                return ValidationResult.Failed(DialogLocalization.ByteDataEmpty);
+            }
+
+            if (Value is not null)
+            {
+                if (Value.Length < MinimumLength)
+                {
+                    return ValidationResult.Failed(DialogLocalization.ByteLengthLessThan(MinimumLength));
+                }
+
+                if (Value.Length > MaximumLength)
+                {
+                    return ValidationResult.Failed(DialogLocalization.ByteLengthExceeded(MaximumLength));
+                }
+            }
+
+            return base.Validate();
+        }
     }
 
     /// <summary>
@@ -193,6 +239,17 @@ namespace ApeFree.ApeDialogs.Settings
         /// 最小值。
         /// </summary>
         public decimal Minimum { get; set; } = -1000000;
+
+        /// <inheritdoc/>
+        public override ValidationResult Validate()
+        {
+            if (Value < Minimum || Value > Maximum)
+            {
+                return ValidationResult.Failed(DialogLocalization.ValueOutOfRange(Minimum, Maximum));
+            }
+
+            return base.Validate();
+        }
     }
 
     /// <summary>

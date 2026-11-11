@@ -176,5 +176,79 @@ namespace ApeFree.ApeDialogs.Tests
             Assert.IsType<SingleChoiceField>(sheet["Gender"]);
             Assert.IsType<MultipleChoiceField>(sheet["Tags"]);
         }
+
+        [Fact]
+        public void NumberField_BuiltInValidation_EnforcesMinMax()
+        {
+            var field = new NumberField { Minimum = 10, Maximum = 100, Value = 5 };
+            var result = field.Validate();
+            Assert.False(result.IsSuccess);
+
+            field.Value = 50;
+            Assert.True(field.Validate().IsSuccess);
+
+            field.Value = 101;
+            Assert.False(field.Validate().IsSuccess);
+        }
+
+        [Fact]
+        public void TextField_And_PasswordField_BuiltInValidation_EnforcesMaximumLength()
+        {
+            var textField = new TextField { MaximumLength = 5, Value = "123456" };
+            Assert.False(textField.Validate().IsSuccess);
+
+            textField.Value = "12345";
+            Assert.True(textField.Validate().IsSuccess);
+
+            var passwordField = new PasswordField { MaximumLength = 6, Value = "abcdefg" };
+            Assert.False(passwordField.Validate().IsSuccess);
+
+            passwordField.Value = "abcdef";
+            Assert.True(passwordField.Validate().IsSuccess);
+        }
+
+        [Fact]
+        public void HexBytesField_BuiltInValidation_EnforcesAllowEmptyAndLengths()
+        {
+            var field = new HexBytesField { AllowEmpty = false, Value = null };
+            Assert.False(field.Validate().IsSuccess);
+
+            field.Value = Array.Empty<byte>();
+            Assert.False(field.Validate().IsSuccess);
+
+            field.MinimumLength = 2;
+            field.MaximumLength = 4;
+            field.Value = new byte[] { 0x01 };
+            Assert.False(field.Validate().IsSuccess);
+
+            field.Value = new byte[] { 0x01, 0x02, 0x03 };
+            Assert.True(field.Validate().IsSuccess);
+
+            field.Value = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+            Assert.False(field.Validate().IsSuccess);
+        }
+
+        [Fact]
+        public void BuiltInValidation_ChainsWithCustomValidator()
+        {
+            var field = new NumberField
+            {
+                Minimum = 0,
+                Maximum = 100,
+                Value = 15,
+                Validator = val => val % 2 == 0 ? ValidationResult.Success : ValidationResult.Failed("Must be even.")
+            };
+
+            // 虽在 [0, 100] 范围内，但自定义验证未通过
+            var result = field.Validate();
+            Assert.False(result.IsSuccess);
+            Assert.Equal("Must be even.", result.ErrorMessage);
+
+            // 超出内置范围时，优先被内置校验拦截
+            field.Value = 102;
+            var outOfRangeResult = field.Validate();
+            Assert.False(outOfRangeResult.IsSuccess);
+            Assert.Equal(DialogLocalization.ValueOutOfRange(0, 100), outOfRangeResult.ErrorMessage);
+        }
     }
 }
