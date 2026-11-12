@@ -4,7 +4,8 @@ ApeFree.ApeDialogs 是一套**跨平台的 Dialog 标准库**（非 UI 实现库
 
 本库由 ApeFree 已开源的 UI 库（ApeForms、AndroidPlus 等）按同一套契约实现。你也可以为自己的 UI 框架实现这套标准。
 
-- 目标框架：`netstandard2.0` / `net8.0`
+- 核心库目标框架：`net452` / `netstandard2.0` / `net6.0` / `net8.0` / `net10.0`
+- WPF / WinForms 实现包目标框架：`net452` / `net461` / `net472` / `net6.0-windows` / `net8.0-windows` / `net10.0-windows`
 - 零 UI 框架依赖：标准层不依赖 System.Drawing，跨平台颜色/字体/尺寸使用自有类型
 - 授权：Apache-2.0
 
@@ -463,7 +464,7 @@ for (int i = 1; i <= 10; i++)
     dialog.UpdateProgress(i / 10.0, $"处理中 {i * 10}%…"); // progress 范围 0.0 ~ 1.0
 }
 dialog.UpdateProgress(1.0, "完成");
-bool completed = await task; // true = 正常完成
+DialogResult<bool> completed = await task; // !completed.IsCanceled 即正常完成
 ```
 
 `ProgressDialogSettings` 额外属性：`IsIndeterminate`（默认 false）、`InitialProgress`（默认 0，范围 0~1）、`InitialMessage`、`CancelOption`（仅 `Cancelable=true` 时展示）。
@@ -559,10 +560,12 @@ var result = await provider.ShowComboBoxInputDialogAsync(new ComboBoxInputDialog
 |---|---|
 | `T? Value` | 结果数据（取消时为 `default`） |
 | `bool IsCanceled` | 是否被取消（用户取消或 token 取消） |
+| `bool IsConfirmed` | 是否已确认（等价于 `!IsCanceled`） |
 | `static DialogResult<T> Confirmed(T value)` | 构造确认结果 |
 | `static DialogResult<T> Canceled` | 构造取消结果 |
 | `T RequireValue()` | 取消时抛 `InvalidOperationException`，否则返回 `Value` |
-| `TOut Match<TOut>(Func<T,TOut> onConfirmed, Func<TOut> onCanceled)` | 按状态分支处理 |
+| `TOut Match<TOut>(Func<T,TOut> onConfirmed, Func<TOut> onCanceled)` | 按状态分支处理并返回值 |
+| `void Match(Action<T> onConfirmed, Action onCanceled)` | 按状态分支执行无返回值动作 |
 
 ### ValidationResult（校验结果）
 
@@ -573,7 +576,7 @@ var result = await provider.ShowComboBoxInputDialogAsync(new ComboBoxInputDialog
 | `bool IsSuccess` | 是否通过 |
 | `string? ErrorMessage` | 失败信息（成功时为 null） |
 | `static ValidationResult Success` | 成功结果 |
-| `static ValidationResult Failure(string errorMessage)` | 构造失败结果 |
+| `static ValidationResult Failure(string errorMessage)` | 构造失败结果（别名：`Failed(string errorMessage)`） |
 
 ### IDialog（对话框接口）
 
@@ -647,6 +650,7 @@ public readonly record struct ValueRange<T>(T Start, T End); // Core 命名空�
 | `Content` | `string?` | `null` | 提示语内容 |
 | `Cancelable` | `bool` | `true` | 是否允许取消（关闭按钮/Esc） |
 | `Theme` | `IDialogTheme?` | `null` | 配色主题，为空用 `DefaultTheme` |
+| `ReminderColor` | `ApeColor?` | `null` | 提示色/强调色，为空时使用主题默认提示色 |
 | `DialogSize` | `ApeSize?` | `null` | 建议尺寸，为空由实现方决定 |
 | `Font` | `DialogFont?` | `null` | 默认字体，为空由实现方决定 |
 | `Duration` | `TimeSpan?` | `null` | 自动关闭时长，超时以取消关闭 |
@@ -657,12 +661,12 @@ public readonly record struct ValueRange<T>(T Start, T End); // Core 命名空�
 ```csharp
 public abstract class DialogSettings<TResult> : DialogSettings
 {
-    public Func<TResult, ValidationResult>? Validator { get; init; } // 结果校验规则
-    public Action<TResult>? OnValueChanged { get; init; }            // 调节类 Dialog 的实时值变化回调
+    public Func<TResult, ValidationResult>? Validator { get; set; } // 结果校验规则
+    public Action<TResult>? OnValueChanged { get; set; }            // 调节类 Dialog 的实时值变化回调
 }
 ```
 
-> 所有属性均为 `init`，使用对象初始化器配置。
+> 所有属性均为 `{ get; set; }`，既支持对象初始化器配置，也支持通过 `DialogProviderExtensions` 传入 `Action<XxxDialogSettings>` 配置委托。
 
 ### DialogOption（选项）
 
@@ -673,10 +677,10 @@ public sealed record DialogOption(
     string Text,
     DialogOptionTag Tag = DialogOptionTag.Neutral,
     bool IsEnabled = true,
-    DialogOptionBehavior Behavior = DialogOptionBehavior.None,
+    Action<IDialog>? Action = null,
     EventHandler<OptionSelectedEventArgs>? OnSelected = null);
 
-public static DialogOption CreateCancelOption(string text = "Cancel"); // 构造"取消"选项
+public static DialogOption CreateCancelOption(string text = "Cancel"); // 构造"取消"选项（内置 Action = dialog => dialog.Cancel()）
 ```
 
 | 成员 | 说明 |
@@ -684,7 +688,7 @@ public static DialogOption CreateCancelOption(string text = "Cancel"); // 构造
 | `Text` | 选项文本 |
 | `Tag` | 语义标签（决定配色） |
 | `IsEnabled` | 是否可用 |
-| `Behavior` | 内置行为：`None` / `Cancel`（取消关闭）/ `Clear`（清空输入）/ `SelectAll`（全选）/ `ReverseSelection`（反选）/ `SetCurrentTime`（设为当前时间） |
+| `Action` | 选项内置快捷动作（例如 `DialogOption.CreateCancelOption()` 内置 `dialog => dialog.Cancel()`） |
 | `OnSelected` | 选中回调，参数 `OptionSelectedEventArgs`（含 `Dialog` 与 `Option`） |
 
 `DialogOptionTag` 枚举：`Neutral`、`Positive`、`Negative`、`Functional`、`Special`。
@@ -701,6 +705,7 @@ public interface IDialogTheme
 }
 
 public sealed class DefaultTheme : IDialogTheme // 内置默认主题
+public class DialogTheme : IDialogTheme         // 可自定义各 Tag 配色与 ReminderColor 的主题类
 ```
 
 跨平台基础类型（替代 System.Drawing）：
@@ -721,7 +726,7 @@ public sealed class DefaultTheme : IDialogTheme // 内置默认主题
 |---|---|
 | `IReadOnlyList<SheetField> Fields` | 字段集合 |
 | `SheetField this[int index]` / `this[string title]` | 按索引/标题取值 |
-| `DataEntrySheet AddField(SheetField field)` | 追加字段（可链式），标题重复或为空抛异常 |
+| `DataEntrySheet AddField(SheetField field)` | 追加字段（可链式），标题重复或为空抛异常（另提供 `AddTextField`、`AddNumberField` 等全系列快捷方法） |
 | `ValidationResult Validate()` | 校验所有字段，返回第一个失败结果 |
 
 **SheetField 基类**
@@ -815,7 +820,7 @@ public class MyDialog<TResult> : BaseDialog<Control, Button, Control, TResult>
         var btn = new Button { Text = dialogOption.Text };
         btn.Click += (_, _) =>
         {
-            if (dialogOption.Behavior == DialogOptionBehavior.Cancel) { Cancel(); return; } // 取消行为 → 直接关闭
+            dialogOption.Action?.Invoke(this);
             dialogOption.OnSelected?.Invoke(this, new OptionSelectedEventArgs(this, dialogOption));
         };
         return btn;
@@ -834,7 +839,7 @@ public class MyDialog<TResult> : BaseDialog<Control, Button, Control, TResult>
 - 确认提交调用受保护的 `bool TrySubmit(TResult value)`：自动执行 `Settings.Validator`，通过则 `Dismiss(Confirmed)` 并返回 `true`；失败则回调 `OnValidationFailed` 并返回 `false`。
 - 视图真正显示后调用 `RaiseShown()`（触发 `Shown` 事件与 `Settings.OnShown`）。
 - `Duration` 自动关闭、取消 token 关闭、`IsShown` 状态维护均由基类内置。
-- 参考实现：`tests/TestDialog.cs`。
+- 参考实现：`tests/ApeFree.ApeDialogs.Tests/TestDialog.cs`。
 
 ### 2. 继承 `DialogProvider<TContext>`
 
@@ -848,7 +853,7 @@ public class MyDialogProvider : DialogProvider<Control>
 }
 ```
 
-参考实现：`tests/TestProvider.cs`。
+参考实现：`tests/ApeFree.ApeDialogs.Tests/TestProvider.cs`。
 
 ## 依赖注入
 
@@ -857,18 +862,26 @@ using Microsoft.Extensions.DependencyInjection;
 using ApeFree.ApeDialogs;
 
 var services = new ServiceCollection();
+
+// 方式一：注册已有实例
 services.AddApeDialogs(new MyDialogProvider());
+
+// 方式二：按类型自动注册（由容器解析依赖）
+// services.AddApeDialogs<Control, MyDialogProvider>();
+
+// 方式三：通过工厂委托注册
+// services.AddApeDialogs<Control>(sp => new MyDialogProvider());
 
 // 消费
 IDialogProvider<Control> provider = sp.GetRequiredService<IDialogProvider<Control>>();
 ```
 
-`AddApeDialogs<TContext>(provider)` 同时以具体类型与接口注册，便于替换与测试。
+`AddApeDialogs` 同时以具体类型、`DialogProvider<TContext>` 与 `IDialogProvider<TContext>` 注册，便于解析、替换与测试。
 
 ## WPF 实现库（ApeFree.ApeDialogs.WPF）
 
 > 安装：`dotnet add package ApeFree.ApeDialogs.WPF`（WinForms 场景另加 `ApeFree.ApeDialogs.WPF.WinForms`）
-> 目标框架：`net461` / `net8.0-windows`，Win11 Fluent 设计风格（圆角/亚克力/深浅色跟随/动画）。
+> 目标框架：`net452` / `net461` / `net472` / `net6.0-windows` / `net8.0-windows` / `net10.0-windows`，Win11 Fluent 设计风格（圆角阴影/深浅色跟随与切换/微动效）。
 
 ```csharp
 using ApeFree.ApeDialogs.WPF;
@@ -925,14 +938,21 @@ DialogResult<string> result = await provider.ShowInputDialogAsync(
 ApeFree.ApeDialogs/                         核心标准库
   Core/                                     IDialog、IDialogController、BaseDialog、
                                             DialogResult、ValidationResult、DialogEventArgs
+  Extensions/                               DialogProviderExtensions（配置委托快捷扩展）
+  Localization/                             DialogLocalization（中英文内置本地化文本）
   Settings/                                 DialogSettings 家族、DialogOption、
                                             DataEntrySheet、SheetField 家族
   Theme/                                    ApeColor、ApeSize、DialogFont、
-                                            IDialogTheme、DefaultTheme、DialogOptionTag
+                                            IDialogTheme、DialogTheme、DefaultTheme、DialogOptionTag
   IDialogProvider.cs / DialogProvider.cs
-  Polyfills/IsExternalInit.cs               netstandard2.0 语言特性支撑
+  Polyfills/IsExternalInit.cs               net452/netstandard2.0 语言特性支撑
 ApeFree.ApeDialogs.DependencyInjection/     DI 注册扩展（可选包）
-tests/                                      xunit 单元测试（含 TestDialog/TestProvider 参考实现）
+ApeFree.ApeDialogs.WPF/                     Win11 Fluent 风格 WPF 实现库
+ApeFree.ApeDialogs.WPF.WinForms/            WinForms 宿主桥接与扩展库
+samples/                                    WPF 与 WinForms 演示工程
+tests/
+  ApeFree.ApeDialogs.Tests/                 核心与 DI xunit 单元测试
+  ApeFree.ApeDialogs.WPF.Tests/             WPF 控件交互与线程安全自动化测试
 .github/workflows/ci.yml                    双 OS 构建 + 测试
 ```
 

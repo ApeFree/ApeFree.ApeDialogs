@@ -15,7 +15,7 @@
 		<RepositoryUrl>https://github.com/ApeFree/ApeFree.ApeDialogs</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/ApeFree/ApeFree.ApeDialogs/blob/main/README.md</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<Version>1.1.0.0-alpha61111</Version>
+		<Version>1.1.0.0-alpha61112</Version>
 		<PackageIcon>ApeFree_64px.png</PackageIcon>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>

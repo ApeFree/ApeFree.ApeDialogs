@@ -53,7 +53,7 @@
 
 | 原则 | 说明 |
 |---|---|
-| **零 UI 框架依赖 (Zero UI Dependencies)** | 标准核心面向 `netstandard2.0` / `net8.0`，完全剥离 `System.Drawing`，采用内置的 `ApeColor`、`DialogFont`、`ApeSize` 等跨平台值类型。 |
+| **零 UI 框架依赖 (Zero UI Dependencies)** | 标准核心面向 `net452` / `netstandard2.0` / `net6.0` / `net8.0` / `net10.0`，完全剥离 `System.Drawing`，采用内置的 `ApeColor`、`DialogFont`、`ApeSize` 等跨平台值类型。 |
 | **消费者与实现方分离 (Role Separation)** | 消费者仅接触 `IDialog<TResult>` 与 `IDialogProvider<TContext>`；UI 实现方继承 `BaseDialog<TView, TOption, TContext, TResult>` 并操作 `IDialogController<TResult>`。 |
 | **异步优先与从不抛异常 (Async-First & Never Throw)** | 所有展示入口统一为 `Task<DialogResult<T>>`。用户取消与 Token 取消均返回不可变的 `DialogResult<T>.Canceled`，无需 try-catch 拦截取消。 |
 | **不可变结果模型 (Immutable Result)** | `DialogResult<T>` 为 `readonly record struct`，具备值语义与线程安全性，支持 `Match` 分支匹配与 `RequireValue` 提取。 |
@@ -112,7 +112,7 @@ ApeFree.ApeDialogs.sln
 │   └── 支持 Microsoft.Extensions.DependencyInjection (AddApeDialogs)
 │
 ├── ApeFree.ApeDialogs.WPF/                    [WPF 原生实现]
-│   └── 基于 Windows 11 Fluent 规范（亚克力、圆角、深浅色跟随、自绘控件）
+│   └── 基于 Windows 11 Fluent 规范（圆角阴影、深浅色跟随、自绘控件）
 │
 ├── ApeFree.ApeDialogs.WPF.WinForms/           [WinForms 桥接库]
 │   └── 将 WinForms Form 包装为 IWin32Owner，复用现代 WPF Fluent 对话框
@@ -122,7 +122,8 @@ ApeFree.ApeDialogs.sln
 │   └── ApeDialogs.WinFormsDemo/               WinForms 演示
 │
 └── tests/                                     [单元测试]
-    └── ApeFree.ApeDialogs.Tests/              基于 Mock (TestProvider / TestDialog) 的全套测试
+    ├── ApeFree.ApeDialogs.Tests/              基于 Mock (TestProvider / TestDialog) 的全套测试
+    └── ApeFree.ApeDialogs.WPF.Tests/          WPF 控件交互与线程安全自动化测试
 ```
 
 ---

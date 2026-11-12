@@ -17,7 +17,7 @@
   - 选择操作：`SelectionDialog`、`MultipleSelectionDialog`、`DateTimeDialog`、`ColorDialog`、`SliderDialog`、`RangeSliderDialog`
   - 文件/文件夹：`OpenFileDialog`、`SaveFileDialog`、`OpenFolderDialog`
   - 复合数据/进度：`DataEntrySheetDialog`（表单录入）、`ProgressDialog`（进度通知）、`TextDialog`（长文本展示）
-- **多目标框架支持**：支持 `.NET Standard 2.0`、`.NET Framework 4.5.2+` 及 `.NET 8.0+`。
+- **多目标框架支持**：支持 `.NET Framework 4.5.2`、`.NET Standard 2.0`、`.NET 6.0`、`.NET 8.0` 及 `.NET 10.0`。
 
 ---
 
@@ -32,14 +32,14 @@ dotnet add package ApeFree.ApeDialogs
 或在项目文件（`.csproj`）中添加引用：
 
 ```xml
-<PackageReference Include="ApeFree.ApeDialogs" Version="1.1.0.0-alpha61111" />
+<PackageReference Include="ApeFree.ApeDialogs" Version="1.1.0.0-alpha61112" />
 ```
 
 ---
 
 ## 🚀 快速上手
 
-### 1. 基础弹窗调用（以接口/实现类为例）
+### 1. 基础弹窗调用（以 `IDialogProvider<TContext>` 为例）
 
 ```csharp
 using System;
@@ -47,44 +47,67 @@ using System.Threading.Tasks;
 using ApeFree.ApeDialogs;
 using ApeFree.ApeDialogs.Settings;
 
-// 假设 provider 是注入或实例化的具体 IDialogProvider（例如 WPF 实现包中的 ApeDialogsWpfProvider）
-IDialogProvider dialogProvider = ...;
+// 假设 dialogProvider 是注入或实例化的具体提供器（如 WPF 实现包中的 ApeDialogsWpfProvider）
+IDialogProvider<object> dialogProvider = ...;
 
-// 1. 弹出消息框
-var result = dialogProvider.ShowMessage("操作已成功完成！", "提示");
-if (!result.IsCanceled)
+// 1. 弹出消息框（支持配置委托扩展方法）
+var result = await dialogProvider.ShowMessageDialogAsync(s =>
+{
+    s.Title = "提示";
+    s.Content = "操作已成功完成！";
+});
+if (result.IsConfirmed)
 {
     Console.WriteLine("用户确认了提示");
 }
 
 // 2. 弹出文本输入框
-var inputResult = dialogProvider.ShowPrompt("请输入您的用户名：", "用户登录");
-if (inputResult.TryGetSuccessValue(out string username))
+var inputResult = await dialogProvider.ShowInputDialogAsync(new InputDialogSettings
 {
-    Console.WriteLine($"输入的用户名: {username}");
+    Title = "用户登录",
+    Content = "请输入您的用户名：",
+});
+if (inputResult.IsConfirmed)
+{
+    Console.WriteLine($"输入的用户名: {inputResult.Value}");
 }
 
 // 3. 弹出列表单选框
 var fruits = new[] { "苹果", "香蕉", "橙子", "西瓜" };
-var selectResult = dialogProvider.ShowSelection(fruits, "请选择喜欢的水果", "水果调查");
-if (selectResult.TryGetSuccessValue(out string selectedFruit))
+var selectResult = await dialogProvider.ShowSelectionDialogAsync(
+    new SelectionDialogSettings<string>
+    {
+        Title = "水果调查",
+        Content = "请选择喜欢的水果",
+    },
+    collection: fruits,
+    defaultSelectedItem: "苹果");
+if (selectResult.IsConfirmed)
 {
-    Console.WriteLine($"用户选择了: {selectedFruit}");
+    Console.WriteLine($"用户选择了: {selectResult.Value}");
 }
 ```
 
 ### 2. 高级表单弹窗 (`DataEntrySheet`)
 
 ```csharp
-var sheet = new DataEntrySheet("用户注册信息");
-sheet.AddField(new SheetField("姓名", typeof(string), isRequired: true));
-sheet.AddField(new SheetField("年龄", typeof(int), defaultValue: 18));
-sheet.AddField(new SheetField("启用通知", typeof(bool), defaultValue: true));
+var sheet = new DataEntrySheet()
+    .AddTextField("姓名")
+    .AddNumberField("年龄", value: 18, minimum: 0, maximum: 150, decimalPlaces: 0);
 
-var sheetResult = dialogProvider.ShowDataEntrySheet(sheet, "请填写以下信息", "注册");
-if (sheetResult.TryGetSuccessValue(out var values))
+var sheetResult = await dialogProvider.ShowDataEntrySheetDialogAsync(
+    sheet,
+    new DataEntrySheetDialogSettings
+    {
+        Title = "注册",
+        Content = "请填写以下信息",
+    });
+
+if (sheetResult.IsConfirmed)
 {
-    Console.WriteLine($"姓名: {sheet.GetFieldValue("姓名")}");
+    var name = ((TextField)sheetResult.Value!["姓名"]).Value;
+    var age = ((NumberField)sheetResult.Value["年龄"]).Value;
+    Console.WriteLine($"姓名: {name}, 年龄: {age}");
 }
 ```
 

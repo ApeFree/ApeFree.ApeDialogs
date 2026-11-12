@@ -20,7 +20,7 @@
     <PackageIcon>ApeFree_64px.png</PackageIcon>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 
-    <Version>1.1.0.0-alpha61111</Version>
+    <Version>1.1.0.0-alpha61112</Version>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
 
     <Deterministic>true</Deterministic>
